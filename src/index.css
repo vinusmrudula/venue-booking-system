@@ -109,3 +109,266 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+.availability.available {
+  color: #16803c;
+}
+
+.availability.unavailable {
+  color: #b42318;
+}
+
+.venue-card button {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+
+.venue-card button:disabled {
+  background: #999999;
+  cursor: not-allowed;
+}
+
+
+.results-page {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+  color: #111111;
+}
+
+.page-description {
+  margin-bottom: 24px;
+  color: #555555;
+}
+
+.building-section {
+  margin-bottom: 28px;
+}
+
+.building-heading {
+  margin-bottom: 14px;
+  font-size: 22px;
+}
+
+.department-heading {
+  margin: 18px 0 10px;
+  font-size: 17px;
+}
+
+.classroom-result {
+  margin-bottom: 16px;
+  border: 1px solid #000000;
+  background: #FFFEFA;
+}
+
+.classroom-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #f2f2f2;
+}
+
+.classroom-header h4 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.availability {
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.availability.available {
+  color: #16803c;
+}
+
+.availability.unavailable {
+  color: #b42318;
+}
+
+.classroom-content {
+  padding: 16px;
+}
+
+.classroom-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+}
+
+.separator {
+  color: #999999;
+  margin: 0 4px;
+}
+
+.classroom-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.detail-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 160px;
+  padding: 10px 12px;
+  border: 1px solid #000000;
+  border-radius: 8px;
+  background-color: #FAF7F1;
+}
+
+.classroom-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.classroom-actions button {
+  padding: 10px 14px;
+  border: 1px solid #ff986b;
+  border-radius: 5px;
+  background: #ffbd9c;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.classroom-actions .secondary-button {
+  border-color: #aaaaaa;
+  background: #f5f5f5;
+  color: #111111;
+}
+
+.classroom-actions button:disabled {
+  border-color: #cccccc;
+  background: #eeeeee;
+  color: #777777;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .results-page {
+    padding: 12px;
+  }
+
+  .classroom-header {
+    align-items: flex-start;
+  }
+
+  .classroom-header h4 {
+    font-size: 16px;
+  }
+
+  .classroom-summary {
+    align-items: flex-start;
+  }
+
+  .detail-box {
+    flex: 1 1 100%;
+  }
+}
+
+
+/* Warm ivory background */
+body {
+  background-color: #F5F1E9;
+  color: #302C26;
+}
+
+/* Main page */
+.results-page {
+  background-color: #F5F1E9;
+  color: #302C26;
+}
+
+/* Classroom panels */
+.classroom-result {
+  background-color: #FFFEFA;
+  border-color: #D8CDBD;
+}
+
+/* Soft hazel-tinted header */
+.classroom-header {
+  background-color: #EDE5D8;
+  color: #302C26;
+}
+
+/* Classroom detail boxes */
+.detail-box {
+  background-color: #FAF7F1;
+  border-color: #DED3C4;
+}
+
+/* Supporting text */
+.page-description {
+  color: #74695B;
+}
+
+/* Building and department headings */
+.building-heading,
+.department-heading {
+  color: #493F32;
+}
+.classroom-result {
+  border: 2px solid #000000 !important;
+  border-radius: 12px;
+  background-color: #FFFEFA;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.classroom-result .classroom-header {
+  border-bottom: 2px solid #000;
+}
+.results-page h1 {
+  color: #493F32;
+}
+
+.classroom-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 20px 0 28px;
+}
+
+.classroom-filters input,
+.classroom-filters select {
+  min-width: 180px;
+  padding: 11px 12px;
+  border: 1px solid #B8A58D;
+  border-radius: 8px;
+  background-color: #FFFEFA;
+  color: #302C26;
+  font: inherit;
+}
+
+.classroom-filters input {
+  flex: 1 1 240px;
+}
+
+.classroom-filters input:focus,
+.classroom-filters select:focus {
+  outline: 2px solid #8B7355;
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .classroom-filters input,
+  .classroom-filters select {
+    width: 100%;
+    min-width: 0;
+  }
+}
