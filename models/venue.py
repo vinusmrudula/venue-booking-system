@@ -15,7 +15,7 @@ class Venue(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
 
-    # Category restricted to the four allowed values
+    # Restricted category
     category = db.Column(
         db.Enum(VenueCategory, values_callable=lambda obj: [e.value for e in obj]),
         nullable=False,
@@ -23,7 +23,7 @@ class Venue(db.Model):
 
     capacity = db.Column(db.Integer, nullable=False, default=0)
 
-    # Required foreign key to Premises (every venue is inside a physical building/premises)
+    # Required foreign key to Premises
     premises_id = db.Column(db.Integer, db.ForeignKey("premises.id"), nullable=False)
 
     # Optional foreign key to Department (null for college-wide venues like auditoriums)
@@ -32,6 +32,7 @@ class Venue(db.Model):
     # Relationships using modern explicit back_populates
     premises = db.relationship("Premises", back_populates="venues")
     department = db.relationship("Department", back_populates="venues")
+    bookings = db.relationship("Booking", back_populates="venue", cascade="all, delete-orphan")
 
     def to_dict(self):
         category_value = self.category.value if isinstance(self.category, VenueCategory) else self.category
@@ -48,4 +49,3 @@ class Venue(db.Model):
 
     def __repr__(self):
         return f"<Venue {self.name} ({self.category})>"
-

@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 from config import Config
 from extensions import db
-from models import Department, Premises, Venue
+from models import Booking, Department, Premises, User, Venue
 
 
 def create_app(config_class=Config):
@@ -32,6 +32,16 @@ def create_app(config_class=Config):
     def get_venues():
         venues = Venue.query.all()
         return jsonify([venue.to_dict() for venue in venues])
+
+    @app.route("/api/users", methods=["GET"])
+    def get_users():
+        users = User.query.all()
+        return jsonify([user.to_dict() for user in users])
+
+    @app.route("/api/bookings", methods=["GET"])
+    def get_bookings():
+        bookings = Booking.query.all()
+        return jsonify([booking.to_dict() for booking in bookings])
 
     return app
 

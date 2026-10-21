@@ -7,8 +7,9 @@ class Department(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=False)
 
-    # Relationship to venues owned by this department
+    # Relationships
     venues = db.relationship("Venue", back_populates="department")
+    users = db.relationship("User", back_populates="department")
 
     def to_dict(self):
         return {
