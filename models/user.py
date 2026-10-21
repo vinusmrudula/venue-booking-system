@@ -13,11 +13,12 @@ class User(db.Model):
     # College role, such as 'student', 'faculty', or 'admin'
     role = db.Column(db.String(50), nullable=False, default="student")
 
-    # Foreign key to Department (optional, as some administrative staff may not be tied to an academic dept)
+    # Foreign key to Department
     department_id = db.Column(db.Integer, db.ForeignKey("departments.id"), nullable=True)
 
-    # Relationship to Department
+    # Relationships
     department = db.relationship("Department", back_populates="users")
+    bookings = db.relationship("Booking", back_populates="user", cascade="all, delete-orphan")
 
     def set_password(self, password: str) -> None:
         """Hashes the plain password securely before saving."""
@@ -28,7 +29,7 @@ class User(db.Model):
         return check_password_hash(self.password_hash, password)
 
     def to_dict(self):
-        """Returns safe user details, intentionally excluding password_hash."""
+        """Returns safe user details, strictly excluding password_hash."""
         return {
             "id": self.id,
             "name": self.name,
@@ -40,4 +41,3 @@ class User(db.Model):
 
     def __repr__(self):
         return f"<User {self.name} ({self.college_email}) - {self.role}>"
-
