@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 from config import Config
 from extensions import db
-from models import Department, Premises
+from models import Department, Premises, Venue
 
 
 def create_app(config_class=Config):
@@ -27,6 +27,11 @@ def create_app(config_class=Config):
     def get_premises():
         premises_list = Premises.query.all()
         return jsonify([premise.to_dict() for premise in premises_list])
+
+    @app.route("/api/venues", methods=["GET"])
+    def get_venues():
+        venues = Venue.query.all()
+        return jsonify([venue.to_dict() for venue in venues])
 
     return app
 

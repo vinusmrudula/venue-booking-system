@@ -5,12 +5,12 @@ class Premises(db.Model):
     __tablename__ = "premises"
 
     id = db.Column(db.Integer, primary_key=True)
-    # Name of the physical building or complex (e.g., 'Academic Complex', 'New CSE')
     name = db.Column(db.String(100), unique=True, nullable=False)
-
-    # Authority who receives booking emails for this building/premises
     authority_name = db.Column(db.String(100), nullable=False)
     authority_email = db.Column(db.String(120), nullable=False)
+
+    # Relationship to venues located inside this premises
+    venues = db.relationship("Venue", back_populates="premises", cascade="all, delete-orphan")
 
     def to_dict(self):
         return {
