@@ -32,6 +32,7 @@ class Venue(db.Model):
     # Relationships using modern explicit back_populates
     premises = db.relationship("Premises", back_populates="venues")
     department = db.relationship("Department", back_populates="venues")
+    bookings = db.relationship("Booking", back_populates="venue")  
 
     def to_dict(self):
         category_value = self.category.value if isinstance(self.category, VenueCategory) else self.category
