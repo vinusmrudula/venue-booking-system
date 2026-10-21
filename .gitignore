@@ -1,4 +1,3 @@
-
 # Environment variables and secrets
 .env
 .env.*
@@ -10,6 +9,10 @@ __pycache__/
 .venv/
 venv/
 env/
+
+# Database and runtime instance
+*.db
+instance/
 
 # Node.js
 node_modules/
