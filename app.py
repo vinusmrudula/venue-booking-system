@@ -1,16 +1,24 @@
 from flask import Flask, jsonify
 from config import Config
 from extensions import db
-from models import Booking, Department, Premises, User, Venue
+from models import Department, Premises
+from routes import admin_bp, auth_bp, venues_bp
+from routes.admin import update_booking_status
 
 
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-    # Initialize extensions with the application
+    # Initialize extensions
     db.init_app(app)
 
+    # Register blueprints (Auth, Venues Catalog, Admin)
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(venues_bp)
+    app.register_blueprint(admin_bp)
+
+    # Base Health Check Route
     @app.route("/")
     def home():
         return jsonify({
@@ -18,30 +26,21 @@ def create_app(config_class=Config):
             "status": "healthy"
         })
 
+    # Metadata routes for frontend search filter dropdowns
     @app.route("/api/departments", methods=["GET"])
     def get_departments():
-        departments = Department.query.all()
+        departments = Department.query.order_by(Department.name.asc()).all()
         return jsonify([dept.to_dict() for dept in departments])
 
     @app.route("/api/premises", methods=["GET"])
     def get_premises():
-        premises_list = Premises.query.all()
+        premises_list = Premises.query.order_by(Premises.name.asc()).all()
         return jsonify([premise.to_dict() for premise in premises_list])
 
-    @app.route("/api/venues", methods=["GET"])
-    def get_venues():
-        venues = Venue.query.all()
-        return jsonify([venue.to_dict() for venue in venues])
-
-    @app.route("/api/users", methods=["GET"])
-    def get_users():
-        users = User.query.all()
-        return jsonify([user.to_dict() for user in users])
-
-    @app.route("/api/bookings", methods=["GET"])
-    def get_bookings():
-        bookings = Booking.query.all()
-        return jsonify([booking.to_dict() for booking in bookings])
+    # REST alias for booking approval/rejection (/api/bookings/{id}/status)
+    @app.route("/api/bookings/<int:booking_id>/status", methods=["PATCH"])
+    def patch_booking_status(booking_id: int):
+        return update_booking_status(booking_id)
 
     return app
 
@@ -49,6 +48,4 @@ def create_app(config_class=Config):
 app = create_app()
 
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
