@@ -141,6 +141,13 @@ VENUES_DATA = [
 # ==============================================================================
 USERS_DATA = [
     {
+        "name": "System Administrator",
+        "college_email": "admin@coep.ac.in",
+        "raw_password": "AdminPassword@123",
+        "role": "admin",
+        "department": "General Administration",
+    },
+    {
         "name": "Prof. Rajesh Joshi",
         "college_email": "rjoshi.comp@coep.ac.in",
         "raw_password": "FacultySecurePassword@123",
