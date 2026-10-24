@@ -120,3 +120,38 @@ def get_venue_detail(venue_id: int):
 
     return jsonify({"venue": data}), 200
 
+
+@venues_bp.route("/filter-options", methods=["GET"])
+@venues_bp.route("/filters", methods=["GET"])
+def get_filter_options():
+    """Stub endpoint returning hardcoded dropdown data for the search screen:
+    the four venue categories and a list of departments.
+    No database queries are executed.
+    """
+    dummy_data = {
+        "categories": [
+            {"id": "classroom", "value": "classroom", "name": "Classroom", "label": "Classroom"},
+            {"id": "seminar_hall", "value": "seminar_hall", "name": "Seminar Hall", "label": "Seminar Hall"},
+            {"id": "auditorium", "value": "auditorium", "name": "Auditorium", "label": "Auditorium"},
+            {"id": "lab", "value": "lab", "name": "Lab", "label": "Lab"},
+        ],
+        "departments": [
+            {"id": 1, "name": "Computer Science and Engineering"},
+            {"id": 2, "name": "Electrical Engineering"},
+            {"id": 9, "name": "General Administration"},
+        ],
+    }
+    return jsonify(dummy_data), 200
+
+
+@venues_bp.route("/categories", methods=["GET"])
+def get_categories():
+    """Stub endpoint returning the four venue categories."""
+    categories = [
+        {"id": "classroom", "value": "classroom", "name": "Classroom", "label": "Classroom"},
+        {"id": "seminar_hall", "value": "seminar_hall", "name": "Seminar Hall", "label": "Seminar Hall"},
+        {"id": "auditorium", "value": "auditorium", "name": "Auditorium", "label": "Auditorium"},
+        {"id": "lab", "value": "lab", "name": "Lab", "label": "Lab"},
+    ]
+    return jsonify(categories), 200
+
