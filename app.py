@@ -76,6 +76,12 @@ def create_app(config_class=Config):
         request.args = request.args.copy()
         return check_availability()
 
+    # REST alias: GET /api/bookings/mine (matches /api/bookings/my)
+    @app.route("/api/bookings/mine", methods=["GET"])
+    def booking_mine_alias():
+        from routes.bookings import get_my_bookings
+        return get_my_bookings()
+
     # REST alias: GET /api/bookings/<id>/email-preview
     @app.route("/api/bookings/<int:booking_id>/email-preview", methods=["GET"])
     def booking_email_preview_alias(booking_id: int):

@@ -63,6 +63,22 @@ res = client.post("/api/bookings", json={
 assert res.status_code == 409, f"Expected 409 Clash, got {res.status_code}: {res.get_json()}"
 print(f"[PASS] POST /api/bookings -> Clashing time slot successfully rejected with 409 Conflict.")
 
+# Test Dummy Clash Trigger (venue_id=999)
+res = client.post("/api/bookings", json={
+    "venue_id": 999,
+    "date": "2026-11-20",
+    "start_time": "09:00:00",
+    "end_time": "11:00:00"
+})
+assert res.status_code == 409, f"Expected 409 Dummy Clash, got {res.status_code}: {res.get_json()}"
+print("[PASS] POST /api/bookings (Dummy clash trigger venue_id=999) -> Returned 409 Conflict.")
+
+# Test Missing Fields Validation
+res = client.post("/api/bookings", json={"venue_id": 1})
+assert res.status_code == 400, f"Expected 400, got {res.status_code}"
+assert res.get_json()["error"]["code"] == "MISSING_FIELDS"
+print("[PASS] POST /api/bookings (Missing fields) -> Correctly rejected with 400 Bad Request.")
+
 # 5. Test Bookings Blueprint: Successful Creation
 res = client.post("/api/bookings", json={
     "venue_id": 1,
@@ -74,12 +90,18 @@ assert res.status_code == 201, f"Expected 201 Created, got {res.status_code}: {r
 new_booking = res.get_json()["booking"]
 print(f"[PASS] POST /api/bookings -> Booking #{new_booking['id']} created successfully.")
 
-# 6. Test Bookings Blueprint: Get My Bookings
+# 6. Test Bookings Blueprint: Get My Bookings (and /mine alias)
 res = client.get("/api/bookings/my")
 assert res.status_code == 200
 my_bookings = res.get_json()["bookings"]
 assert any(b["id"] == new_booking["id"] for b in my_bookings)
 print(f"[PASS] GET /api/bookings/my -> Retrieved {len(my_bookings)} bookings for current user.")
+
+res = client.get("/api/bookings/mine")
+assert res.status_code == 200
+mine_bookings = res.get_json()["bookings"]
+assert len(mine_bookings) > 0
+print(f"[PASS] GET /api/bookings/mine -> Alias successfully retrieved {len(mine_bookings)} bookings.")
 
 # 7. Test Email Blueprint: Preview Email
 res = client.get(f"/api/bookings/{new_booking['id']}/email-preview")

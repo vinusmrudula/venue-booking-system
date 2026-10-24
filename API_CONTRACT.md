@@ -522,8 +522,8 @@ Every error in the API strictly returns the following JSON structure with a corr
 ---
 
 ### 4.5 View My Previous Bookings
-* **Endpoint:** `GET /api/bookings/my`
-* **Requires Auth:** Yes
+* **Endpoint:** `GET /api/bookings/my` *(or `GET /api/bookings/mine`)*
+* **Requires Auth:** Yes (Optional in stub mode, returns mock bookings)
 * **Description:** Returns all bookings made by the currently authenticated user (past, present, and pending).
 
 #### Success Response (`200 OK`)
