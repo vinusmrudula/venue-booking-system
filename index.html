@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BookIt – College Venue Booking System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+  <!-- ==============================
+       UTILITY BAR (top strip)
+  ================================-->
+  <div class="utility-bar">
+    <div class="util-left">
+      <span>🏛️ College Venue &amp; Facility Booking Platform</span>
+      <span class="util-badge">Official Portal</span>
+    </div>
+    <div class="util-right">
+      <span id="util-datetime">Loading...</span>
+    </div>
+  </div>
+
+  <!-- ==============================
+       MAIN HEADER
+  ================================-->
+  <header class="app-header">
+    <button class="brand-btn" id="brand-home-btn" aria-label="BookIt Home">
+      <img src="assets/logo.jpg" alt="BookIt Logo" class="header-logo" />
+    </button>
+
+    <nav class="header-nav" id="nav-menu">
+      <a href="#" class="nav-link" id="nav-prev-bookings-btn" style="display:none">📋 My Bookings</a>
+
+      <!-- User badge (shown when logged in) -->
+      <div class="nav-user-badge" id="nav-user-badge" style="display:none">
+        <div class="user-avatar" id="user-avatar-char">U</div>
+        <span id="nav-user-name">User</span>
+      </div>
+
+      <button class="btn-logout" id="nav-logout-btn" style="display:none">Logout</button>
+
+      <!-- SINGLE BUTTON: Sign In / Create Account (As requested) -->
+      <button class="btn-login-register" id="btn-open-auth">Sign In / Create Account</button>
+    </nav>
+
+    <button class="mobile-toggle" id="mobile-toggle-btn" aria-label="Toggle navigation menu">☰</button>
+  </header>
+
+  <!-- ==============================
+       HERO SECTION
+  ================================-->
+  <section class="hero-section" id="hero-search-section">
+    <div class="hero-overlay"></div>
+
+    <!-- LEFT: Search Panel -->
+    <div class="search-panel">
+      <div class="search-panel-header">
+        <span class="search-panel-icon">🏛️</span>
+        <span>BOOK VENUE</span>
+      </div>
+
+      <form id="hero-search-form" novalidate>
+
+        <!-- Building / Department (MANDATORY) -->
+        <div class="field-group">
+          <label class="field-label" for="filter-dept">Building / Department <span class="req-star">*</span></label>
+          <select id="filter-dept" class="field-input">
+            <option value="">— Select Building / Department —</option>
+            <option value="academic_complex">Academic Complex</option>
+            <option value="civil">Department of Civil Engineering</option>
+            <option value="cse_new">Department of CSE (New Wing)</option>
+            <option value="cse_old">Department of CSE (Old Wing)</option>
+            <option value="electrical">Department of Electrical Engineering</option>
+            <option value="entc">Department of E&amp;TC Engineering</option>
+            <option value="manufacturing">Department of Manufacturing Engineering</option>
+            <option value="mechanical">Department of Mechanical Engineering</option>
+            <option value="metallurgy">Department of Metallurgy &amp; Materials</option>
+            <option value="planning">Department of Planning</option>
+            <option value="main_audi">Main Auditorium</option>
+            <option value="mini_audi">Mini Auditorium</option>
+            <option value="cognizant_lab">Cognizant Lab</option>
+          </select>
+          <span class="field-error" id="search-dept-error">Please select a building / department</span>
+        </div>
+
+        <!-- Date (MANDATORY) -->
+        <div class="field-group">
+          <label class="field-label" for="filter-date">Booking Date <span class="req-star">*</span></label>
+          <input type="date" id="filter-date" class="field-input" />
+          <span class="field-error" id="search-date-error">Please select a date</span>
+        </div>
+
+        <!-- Classroom / Room Name (Optional) -->
+        <div class="field-group">
+          <label class="field-label" for="filter-room-name">Classroom / Room Name (Optional)</label>
+          <input type="text" id="filter-room-name" class="field-input" placeholder="e.g. NC 27, AC 101, Lab..." />
+        </div>
+
+        <!-- Min Capacity -->
+        <div class="field-group">
+          <label class="field-label" for="filter-capacity">Capacity of Class</label>
+          <select id="filter-capacity" class="field-input">
+            <option value="0">Any Capacity</option>
+            <option value="40">40+ Students</option>
+            <option value="60">60+ Students</option>
+            <option value="80">80+ Students</option>
+            <option value="100">100+ Students</option>
+            <option value="150">150+ Students</option>
+            <option value="250">250+ Students (Auditorium)</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-search-venues" id="btn-search-venues-submit">
+          🔍 Search Venues
+        </button>
+      </form>
+    </div>
+
+    <!-- RIGHT: Hero text and Information about the app -->
+    <div class="hero-text-block">
+      <div class="hero-tag-badge">College Facility Reservation Portal</div>
+      <h6 class="hero-title">Your Space, Just a Click Away.</h6>
+      <p class="hero-subtitle">
+        Simple • Smart • Seamless <br><br>
+        A unified platform to simplify booking classrooms, seminar halls, auditoriums, and other college facilities. Designed to prevent scheduling clashes and streamline permission approvals.
+      </p>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       CONTACT US & ADDRESS SECTION
+  ========================================================================== -->
+  <section class="section-contact" id="section-contact">
+    <div class="section-inner">
+      
+      <div class="section-header-center">
+        <span class="section-badge">About Us</span>
+        <h3 class="section-title">About Our Platform</h3>
+        <p class="section-desc">
+          Our Venue Booking System is designed to make booking college facilities simple, convenient, and hassle-free. The platform helps students, faculty members, and college staff request venues such as classrooms, seminar halls, auditoriums, and other campus spaces in one place. Instead of manually checking availability or sending separate emails to request a classroom booking, users can easily submit their booking requests through our platform. They can check venue availability, select their preferred date and time, and send requests for approval. The system helps administrators manage booking requests efficiently and avoid scheduling conflicts. It also makes it easier to track booking status and manage venue schedules. Our goal is to save time, reduce paperwork, and improve communication between students, faculty, and administration. By bringing the entire venue booking process onto a single platform, we aim to create a smoother, more organized, and user-friendly experience for everyone on campus.
+        </p>
+      </div>
+
+      <div class="contact-grid">
+        
+    </div>
+  </section>
+
+  <!-- ==============================
+       FOOTER (Simple & Attractive)
+  ================================-->
+  <footer class="app-footer">
+    <div class="footer-simple-wrap">
+      <div class="footer-simple-brand">
+        <img src="assets/logo.jpg" alt="BookIt" class="footer-logo" />
+        <span class="footer-brand-name">BookIt</span>
+      </div>
+      <p class="footer-simple-tagline">College Facility &amp; Classroom Reservation Platform</p>
+      <div class="footer-simple-contact">
+        <span>📍 Student Section Near Main Building, Shivajinagar, Pune</span>
+        <span class="footer-dot">&bull;</span>
+        <span>📧 <a href="mailto:venues.admin@college.ac.in" class="footer-link"> kss.office@coeptech.ac.in</a></span>
+        <span class="footer-dot">&bull;</span>
+        <span>📞 +91 9689368066</span>
+      </div>
+      <div class="footer-bottom-strip">
+        <p>&copy; 2026 BookIt – College Venue Booking System</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =========================================================================
+       AUTH MODAL (Sign In / Create Account with OTP Authentication)
+  ========================================================================== -->
+  <div class="modal-overlay" id="auth-modal">
+    <div class="auth-modal-card">
+      <button class="modal-close-btn" id="auth-modal-close" aria-label="Close modal">✕</button>
+
+      <!-- Tabs: Sign In / Create Account -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-signin" data-tab="signin">Sign In</button>
+        <button class="auth-tab" id="tab-register" data-tab="register">Create Account</button>
+      </div>
+
+      <!-- ---- SIGN IN PANEL ---- -->
+      <div class="auth-panel active" id="panel-signin">
+        <p class="auth-panel-title">Sign in with your official college credentials</p>
+
+        <div class="banner-error" id="signin-banner-error">
+          <span id="signin-banner-error-text"></span>
+        </div>
+
+        <form id="signin-form" novalidate>
+          <div class="field-group">
+            <label class="field-label" for="signin-email">College Email (.ac.in) <span class="req-star">*</span></label>
+            <input type="email" id="signin-email" class="field-input" placeholder="yourname@college.ac.in" autocomplete="email" />
+            <span class="field-error" id="signin-email-error"></span>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="signin-password">Password <span class="req-star">*</span></label>
+            <input type="password" id="signin-password" class="field-input" placeholder="Enter your password" autocomplete="current-password" />
+            <span class="field-error" id="signin-password-error"></span>
+          </div>
+          <div class="field-hint-row">
+            <a href="#" id="forgot-password-link" class="link-small">Forgot password?</a>
+          </div>
+          <button type="submit" class="btn-auth-submit" id="signin-submit-btn">
+            <span>Sign In</span>
+          </button>
+        </form>
+        <p class="auth-switch-text">
+          New to BookIt? <a href="#" id="goto-register-link" class="link-teal">Create an account</a>
+        </p>
+      </div>
+
+      <!-- ---- CREATE ACCOUNT PANEL (Uses OTP Authentication) ---- -->
+      <div class="auth-panel" id="panel-register">
+        <p class="auth-panel-title">Create Official Account &bull; OTP Authentication</p>
+
+        <div class="banner-error" id="register-banner-error">
+          <span id="register-banner-error-text"></span>
+        </div>
+
+        <form id="register-form" novalidate>
+          <div class="field-group">
+            <label class="field-label" for="reg-name">Full Name <span class="req-star">*</span></label>
+            <input type="text" id="reg-name" class="field-input" placeholder="e.g. Aman Sharma" autocomplete="name" />
+            <span class="field-error" id="reg-name-error"></span>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="reg-email">College Email (.ac.in) <span class="req-star">*</span></label>
+            <input type="email" id="reg-email" class="field-input" placeholder="yourname@college.ac.in" autocomplete="email" />
+            <span class="field-error" id="reg-email-error"></span>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="reg-role">Role <span class="req-star">*</span></label>
+            <select id="reg-role" class="field-input">
+              <option value="">— Select your role —</option>
+              <option value="student">Student Organizer</option>
+              <option value="faculty">Faculty Member</option>
+              <option value="admin">Department Staff / Admin</option>
+            </select>
+            <span class="field-error" id="reg-role-error"></span>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="reg-dept">Department / Branch <span class="req-star">*</span></label>
+            <select id="reg-dept" class="field-input">
+              <option value="">— Select your department —</option>
+              <option value="Academic Complex">Academic Complex</option>
+              <option value="Department of Civil Engineering">Department of Civil Engineering</option>
+              <option value="Department of Computer Science and Engineering (new)">Department of Computer Science and Engineering (new)</option>
+              <option value="Department of Computer Science and Engineering (old)">Department of Computer Science and Engineering (old)</option>
+              <option value="Department of Electrical Engineering">Department of Electrical Engineering</option>
+              <option value="Department of Electronics &amp; Telecommunication Engineering">Department of Electronics &amp; Telecommunication Engineering</option>
+              <option value="Department of Manufacturing Engineering &amp; Industrial Management">Department of Manufacturing Engineering &amp; Industrial Management</option>
+              <option value="Department of Mechanical Engineering">Department of Mechanical Engineering</option>
+              <option value="Department of Metallurgy and Material Engineering">Department of Metallurgy and Material Engineering</option>
+              <option value="Department of Planning">Department of Planning</option>
+              <option value="Main Auditorium">Main Auditorium</option>
+              <option value="Mini Auditorium">Mini Auditorium</option>
+              <option value="Cognizant Lab">Cognizant Lab</option>
+            </select>
+            <span class="field-error" id="reg-dept-error"></span>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="reg-password">Password <span class="req-star">*</span></label>
+            <input type="password" id="reg-password" class="field-input" placeholder="Min 6 characters" autocomplete="new-password" />
+            <span class="field-error" id="reg-password-error"></span>
+          </div>
+          <button type="submit" class="btn-auth-submit" id="register-submit-btn">
+            <span>Continue → Verify via OTP</span>
+          </button>
+        </form>
+        <p class="auth-switch-text">
+          Already have an account? <a href="#" id="goto-signin-link" class="link-teal">Sign in</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================
+       OTP VERIFICATION MODAL
+  ================================-->
+  <div class="modal-overlay" id="otp-modal">
+    <div class="auth-modal-card otp-card">
+      <div class="otp-icon">📧</div>
+      <h2 class="otp-heading">Verify College Email</h2>
+      <p class="otp-sub">We sent a 4-digit authentication code to</p>
+      <p class="otp-email-display" id="otp-display-email">your@college.ac.in</p>
+
+      <div class="banner-error" id="otp-banner-error">
+        <span id="otp-banner-error-text"></span>
+      </div>
+
+      <form id="otp-form" novalidate>
+        <div class="otp-inputs-row">
+          <input type="text" id="otp-1" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="Digit 1" />
+          <input type="text" id="otp-2" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="Digit 2" />
+          <input type="text" id="otp-3" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="Digit 3" />
+          <input type="text" id="otp-4" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="Digit 4" />
+        </div>
+        <button type="submit" class="btn-auth-submit" id="otp-submit-btn">
+          <span>Verify &amp; Complete Registration</span>
+        </button>
+      </form>
+
+      <div class="otp-resend-row">
+        <button class="link-btn" id="btn-resend-otp" disabled>Resend Code</button>
+        <span class="otp-timer" id="otp-timer-text"></span>
+      </div>
+      <button class="link-btn otp-back-link" id="otp-back-btn">← Back to Registration</button>
+    </div>
+  </div>
+
+  <!-- ==============================
+       PREVIOUS BOOKINGS MODAL
+  ================================-->
+  <div class="modal-overlay" id="prev-bookings-modal">
+    <div class="history-modal-card">
+      <div class="history-modal-header">
+        <h2>My Booking History &amp; Requisitions</h2>
+        <button class="modal-close-btn" id="close-history-modal-btn">✕</button>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Booking ID</th>
+              <th>Venue</th>
+              <th>Department</th>
+              <th>Date</th>
+              <th>Slot</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="history-table-body"></tbody>
+        </table>
+      </div>
+
+      <div class="empty-state" id="history-empty" style="display:none">
+        <div class="empty-icon">📋</div>
+        <p>No booking history found for this account.</p>
+      </div>
+
+      <div style="text-align:right; margin-top:1rem">
+        <button class="btn btn-outline" id="btn-close-history">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================
+       TOAST NOTIFICATIONS
+  ================================-->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

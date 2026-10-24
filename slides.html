@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BookIt Project Presentation - College Venue Booking System</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    body {
+      background-color: var(--teal-900);
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-x: hidden;
+    }
+
+    .slides-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+    }
+
+    .slide-card {
+      background-color: var(--mint-card);
+      color: var(--text-primary);
+      width: 100%;
+      max-width: 950px;
+      min-height: 520px;
+      border-radius: var(--radius-lg);
+      padding: 3rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+      border: 2px solid var(--teal-500);
+      display: none;
+      animation: slideIn 0.35s ease;
+      position: relative;
+    }
+
+    .slide-card.active {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .slide-badge {
+      display: inline-block;
+      background-color: var(--mint-subtle);
+      color: var(--teal-800);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-full);
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .slide-title {
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: var(--teal-800);
+      margin-bottom: 0.5rem;
+      line-height: 1.2;
+    }
+
+    .slide-subtitle {
+      font-size: 1.1rem;
+      color: var(--teal-600);
+      margin-bottom: 1.75rem;
+      font-weight: 500;
+    }
+
+    .slide-content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .feature-box {
+      background-color: var(--mint-surface);
+      border: 1.5px solid var(--mint-border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+    }
+
+    .feature-box h4 {
+      color: var(--teal-900);
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .feature-box p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .slide-controls {
+      background-color: rgba(7, 46, 44, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .slide-progress {
+      font-size: 0.95rem;
+      color: var(--mint-accent);
+      font-weight: 600;
+    }
+
+    .code-pill {
+      background: #edf6f4;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: var(--teal-800);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Slide Presentation Header -->
+  <header style="padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1);">
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <img src="assets/logo.jpg" alt="Logo" style="height: 36px; border-radius: 6px; background: #fff; padding: 2px;" />
+      <span style="font-size: 1.25rem; font-weight: 700; color: #fff;">BookIt Presentation Slides</span>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <a href="index.html" class="btn btn-sm btn-secondary" style="background: var(--mint-accent); color: var(--teal-900);">
+        &larr; Open Live Application
+      </a>
+    </div>
+  </header>
+
+  <!-- Slide Canvas -->
+  <main class="slides-wrapper">
+
+    <!-- SLIDE 1: Title Slide -->
+    <div class="slide-card active" id="slide-1">
+      <div>
+        <span class="slide-badge">Project Review &bull; Frontend Track</span>
+        <h1 class="slide-title">BookIt &ndash; College Facility & Venue Booking System</h1>
+        <p class="slide-subtitle">A modern web platform to streamline classroom, lab, seminar hall & auditorium scheduling.</p>
+        
+        <div class="slide-content-grid" style="margin-top: 2rem;">
+          <div class="feature-box" style="border-left: 4px solid var(--teal-700);">
+            <h4>&#128104;&#8205;&#128187; Project Team & Roles</h4>
+            <p>
+              &bull; <strong>Frontend Engineer:</strong> UI/UX, Dynamic JavaScript Architecture, Availability Engine.<br>
+              &bull; <strong>Backend Partner:</strong> Bhargav (API Design, Database, Mail Services).
+            </p>
+          </div>
+          <div class="feature-box" style="border-left: 4px solid var(--teal-500);">
+            <h4>&#127912; Visual & Tech Identity</h4>
+            <p>
+              &bull; <strong>Palette:</strong> Medium-bright Dark Teal + Soothing Mint.<br>
+              &bull; <strong>Stack:</strong> Semantic HTML5, CSS3 Grid/Flexbox, Pure JavaScript (Zero dependencies).
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size: 0.85rem; color: var(--text-muted); border-top: 1px solid var(--mint-border); padding-top: 1rem;">
+        Press <kbd>&rarr;</kbd> or click <strong>Next</strong> below to navigate slides.
+      </div>
+    </div>
+
+    <!-- SLIDE 2: Problem & Motivation -->
+    <div class="slide-card" id="slide-2">
+      <div>
+        <span class="slide-badge">The Problem Statement</span>
+        <h2 class="slide-title">Why Campus Facilities Need "BookIt"</h2>
+        <p class="slide-subtitle">Replacing manual logbooks and chaotic WhatsApp permission chains.</p>
+
+        <div class="slide-content-grid">
+          <div class="feature-box">
+            <h4>&#10060; The Old Manual Way</h4>
+            <p>
+              Students and professors physically hunt for keys, sign paper registers, and face double-booked classrooms on the day of major presentations or events.
+            </p>
+          </div>
+          <div class="feature-box">
+            <h4>&#9888; Scheduling Clashes</h4>
+            <p>
+              No centralized view to verify whether <strong>NC 27</strong> or <strong>NC 28</strong> is occupied at 10 AM, causing embarrassing collisions between departments.
+            </p>
+          </div>
+          <div class="feature-box">
+            <h4>&#10004; The BookIt Solution</h4>
+            <p>
+              Instant date-based availability checks, departmental grouping (CSE, Electrical, Mech), capacity filtering, and pre-drafted formal requisition emails to HODs.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div style="font-size: 0.85rem; color: var(--text-muted); border-top: 1px solid var(--mint-border); padding-top: 0.75rem;">
+        Focus: Zero scheduling confusion, verified student & faculty identities.
+      </div>
+    </div>
+
+    <!-- SLIDE 3: Wireframe to Implementation -->
+    <div class="slide-card" id="slide-3">
+      <div>
+        <span class="slide-badge">Design Execution</span>
+        <h2 class="slide-title">Handwritten Wireframe &rarr; Working Product</h2>
+        <p class="slide-subtitle">Faithfully translating the notebook sketch into responsive web software.</p>
+
+        <div class="slide-content-grid">
+          <div class="feature-box">
+            <h4>1. Landing & OTP Auth</h4>
+            <p>
+              &bull; Official BookIt logo with dark-teal & glowing halo aesthetic.<br>
+              &bull; Mandatory <strong>.ac.in</strong> email validation with real-time 4-digit <strong>OTP verification</strong>.
+            </p>
+          </div>
+          <div class="feature-box">
+            <h4>2. Campus Branches & Facilities</h4>
+            <p>
+              &bull; 13 College Branches: Academic Complex, Civil, CSE (old/new), Electrical, E&TC, Manufacturing, Mech, Metallurgy, Planning.<br>
+              &bull; Central Auditoriums: Main Audi, Mini Audi, Cognizant Lab.
+            </p>
+          </div>
+          <div class="feature-box">
+            <h4>3. Approval Flow & Booking</h4>
+            <p>
+              &bull; Availability calculation by date (NC 27 Available vs NC 28 Booked).<br>
+              &bull; Formal requisition mailer with instant confirmation ticket generation.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div style="font-size: 0.85rem; color: var(--text-muted); border-top: 1px solid var(--mint-border); padding-top: 0.75rem;">
+        Complete end-to-end journey from paper sketch to clickable software.
+      </div>
+    </div>
+
+    <!-- SLIDE 4: Full-Stack Developer Bug Prevention Masterclass -->
+    <div class="slide-card" id="slide-4">
+      <div>
+        <span class="slide-badge">Senior Developer Insights</span>
+        <h2 class="slide-title">Bugs Explained & Architecturally Prevented</h2>
+        <p class="slide-subtitle">Techniques used to make this frontend robust and production-grade.</p>
+
+        <div class="slide-content-grid">
+          <div class="feature-box">
+            <h4>&#128027; Form Default Reload Bug</h4>
+            <p>
+              <strong>Problem:</strong> Standard HTML form submissions cause a full page refresh, wiping state.<br>
+              <strong>Fix:</strong> Handled via <span class="code-pill">e.preventDefault()</span> with client-side async submission.
+            </p>
+          </div>
+          <div class="feature-box">
+            <h4>&#128027; Timezone Date Offset Bug</h4>
+            <p>
+              <strong>Problem:</strong> Calling <span class="code-pill">new Date().toISOString()</span> produces UTC date which shifts yesterday in Indian Standard Time (UTC+5:30).<br>
+              <strong>Fix:</strong> Formatted local date string helper avoiding timezone shift.
+            </p>
+          </div>
+          <div class="feature-box">
+            <h4>&#128027; Clash Detection Bug</h4>
+            <p>
+              <strong>Problem:</strong> Two users trying to book NC 27 for the same date.<br>
+              <strong>Fix:</strong> Client and API clash validation checking active records before saving.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div style="font-size: 0.85rem; color: var(--text-muted); border-top: 1px solid var(--mint-border); padding-top: 0.75rem;">
+        Clean defensive programming prevents 99% of frontend support tickets.
+      </div>
+    </div>
+
+    <!-- SLIDE 5: Backend Integration Blueprint (With Bhargav) -->
+    <div class="slide-card" id="slide-5">
+      <div>
+        <span class="slide-badge">Team Collaboration</span>
+        <h2 class="slide-title">Backend API Integration Blueprint</h2>
+        <p class="slide-subtitle">Ready for seamless connection with Bhargav's REST backend.</p>
+
+        <div class="slide-content-grid">
+          <div class="feature-box">
+            <h4>Centralized API Layer</h4>
+            <p>
+              All HTTP and mock communication is isolated in <span class="code-pill">js/api.js</span>.<br>
+              To plug into real backend: change <span class="code-pill">USE_MOCK = false</span> and configure <span class="code-pill">BASE_URL</span>.
+            </p>
+          </div>
+          <div class="feature-box">
+            <h4>Standard REST Endpoints</h4>
+            <p>
+              &bull; <span class="code-pill">POST /api/auth/register</span><br>
+              &bull; <span class="code-pill">POST /api/auth/login</span><br>
+              &bull; <span class="code-pill">GET /api/venues/search?date=...</span><br>
+              &bull; <span class="code-pill">POST /api/bookings</span>
+            </p>
+          </div>
+          <div class="feature-box">
+            <h4>Session Security</h4>
+            <p>
+              Equipped with token storage, protected route checking (<span class="code-pill">isAuthenticated()</span>), and auto-logout on token expiration.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div style="font-size: 0.85rem; color: var(--text-muted); border-top: 1px solid var(--mint-border); padding-top: 0.75rem;">
+        Zero frontend refactoring needed when the backend goes live!
+      </div>
+    </div>
+
+    <!-- SLIDE 6: Summary & Live Demo -->
+    <div class="slide-card" id="slide-6">
+      <div style="text-align: center; padding: 2rem 0;">
+        <span class="slide-badge">Conclusion</span>
+        <h2 class="slide-title" style="font-size: 2.6rem;">BookIt is Ready for Campus!</h2>
+        <p class="slide-subtitle" style="max-width: 650px; margin: 0 auto 2.5rem auto;">
+          Delivering an intuitive, responsive, human-crafted experience with medium-bright Dark Teal + Mint aesthetics.
+        </p>
+
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+          <a href="index.html" class="btn btn-primary" style="font-size: 1.1rem; padding: 0.85rem 2rem;">
+            Launch Interactive Application &rarr;
+          </a>
+        </div>
+      </div>
+      <div style="font-size: 0.85rem; color: var(--text-muted); border-top: 1px solid var(--mint-border); padding-top: 0.75rem; text-align: center;">
+        Thank you! Questions & Live Demo walkthrough.
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Slide Footer Controls -->
+  <footer class="slide-controls">
+    <button class="btn btn-sm btn-outline" id="prev-slide-btn" style="color: #fff; border-color: rgba(255,255,255,0.4);">
+      &larr; Previous Slide
+    </button>
+    <div class="slide-progress" id="slide-progress-text">
+      Slide 1 of 6
+    </div>
+    <button class="btn btn-sm btn-primary" id="next-slide-btn" style="background-color: var(--teal-500);">
+      Next Slide &rarr;
+    </button>
+  </footer>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 6;
+
+    const progressText = document.getElementById("slide-progress-text");
+    const prevBtn = document.getElementById("prev-slide-btn");
+    const nextBtn = document.getElementById("next-slide-btn");
+
+    function updateSlide(newSlide) {
+      if (newSlide < 1 || newSlide > totalSlides) return;
+      document.getElementById(`slide-${currentSlide}`).classList.remove("active");
+      currentSlide = newSlide;
+      document.getElementById(`slide-${currentSlide}`).classList.add("active");
+      progressText.textContent = `Slide ${currentSlide} of ${totalSlides}`;
+
+      prevBtn.disabled = currentSlide === 1;
+      nextBtn.disabled = currentSlide === totalSlides;
+    }
+
+    prevBtn.addEventListener("click", () => updateSlide(currentSlide - 1));
+    nextBtn.addEventListener("click", () => updateSlide(currentSlide + 1));
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight" || e.key === " ") updateSlide(currentSlide + 1);
+      if (e.key === "ArrowLeft") updateSlide(currentSlide - 1);
+    });
+
+    updateSlide(1);
+  </script>
+</body>
+</html>
