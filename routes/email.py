@@ -9,64 +9,110 @@ from auth_middleware import get_current_user, login_required
 email_bp = Blueprint("email", __name__, url_prefix="/api/email")
 logger = logging.getLogger(__name__)
 
+# Formal email templates with named placeholders
+EMAIL_SUBJECT_TEMPLATE = "Venue Booking Permission Request: {venue_name} on {date}"
 
-def generate_email_content(booking: Booking, optional_note: str = None):
-    """Generates recipient info, subject line, plain text, and HTML body for authority notification."""
-    venue = booking.venue
-    premises = venue.premises if venue else None
-    user = booking.user
+EMAIL_TEXT_TEMPLATE = """Respected Sir/Madam,
 
-    authority_name = premises.authority_name if premises else "Authorized Official"
-    authority_email = premises.authority_email if premises else "authority@coep.ac.in"
-    premises_name = premises.name if premises else "Campus Facility"
-    requester_name = user.name if user else "College Member"
-    requester_email = user.college_email if user else "unknown@coep.ac.in"
+I am writing to formally request permission to book the following venue for college activities.
 
-    formatted_date = booking.date.strftime("%Y-%m-%d")
-    formatted_start = booking.start_time.strftime("%H:%M")
-    formatted_end = booking.end_time.strftime("%H:%M")
+--- Requester Details ---
+• Name: {requester_name}
+• Role: {requester_role}
+• Department: {requester_department}
+• College Email: {requester_email}
 
-    subject = f"Venue Booking Request: {venue.name} on {formatted_date}"
+--- Venue & Schedule Details ---
+• Venue: {venue_name} (Capacity: {venue_capacity})
+• Premises / Building: {premises_name}
+• Date: {date}
+• Time Slot: {start_time} to {end_time}
+• Purpose: {purpose}
 
-    note_section_text = f"\nAdditional Note from Requester:\n\"{optional_note}\"\n" if optional_note else ""
-    note_section_html = f"<p><strong>Additional Note:</strong> <em>{optional_note}</em></p>" if optional_note else ""
+Kindly review this request in the administrative venue portal and grant the necessary approval.
 
-    body_text = (
-        f"Dear {authority_name},\n\n"
-        f"{requester_name} ({requester_email}) has submitted a reservation request for {venue.name} "
-        f"located at {premises_name}.\n\n"
-        f"Reservation Details:\n"
-        f"- Date: {formatted_date}\n"
-        f"- Time: {formatted_start} to {formatted_end}\n"
-        f"- Purpose / Status: {booking.status.value.upper()}\n"
-        f"{note_section_text}\n"
-        f"Please log in to the Administrative Venue Portal to review and approve or reject this booking request.\n\n"
-        f"Regards,\n"
-        f"Venue Booking System Administration"
-    )
+Thank you for your time and consideration.
 
-    body_html = f"""
-    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-        <h2 style="color: #1a365d;">Venue Reservation Request</h2>
-        <p>Dear <strong>{authority_name}</strong>,</p>
-        <p><strong>{requester_name}</strong> (<a href="mailto:{requester_email}">{requester_email}</a>) has submitted a booking request for <strong>{venue.name}</strong> at <strong>{premises_name}</strong>.</p>
-        <div style="background-color: #f7fafc; padding: 15px; border-left: 4px solid #3182ce; margin: 15px 0;">
-            <p style="margin: 4px 0;"><strong>Venue:</strong> {venue.name} (Capacity: {venue.capacity})</p>
-            <p style="margin: 4px 0;"><strong>Date:</strong> {formatted_date}</p>
-            <p style="margin: 4px 0;"><strong>Slot:</strong> {formatted_start} &ndash; {formatted_end}</p>
-            <p style="margin: 4px 0;"><strong>Status:</strong> {booking.status.value.upper()}</p>
-        </div>
-        {note_section_html}
-        <p>Please log in to the administrative portal to approve or reject this request.</p>
-        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
-        <small style="color: #718096;">COEP Venue Booking Notification Service</small>
+Warm regards,
+{requester_name}
+COEP Tech Venue Booking System"""
+
+EMAIL_HTML_TEMPLATE = """<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #2d3748; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
+    <h3 style="color: #1a365d; border-bottom: 2px solid #3182ce; padding-bottom: 8px; margin-top: 0;">Venue Booking Permission Request</h3>
+    <p style="font-size: 15px; margin-bottom: 12px;"><strong>Respected Sir/Madam,</strong></p>
+    <p>A formal reservation request has been submitted for your review and approval.</p>
+
+    <div style="background-color: #f7fafc; padding: 14px 18px; border-left: 4px solid #3182ce; border-radius: 4px; margin: 16px 0;">
+        <h4 style="margin: 0 0 8px 0; color: #2b6cb0;">Requester Details</h4>
+        <p style="margin: 3px 0;"><strong>Name:</strong> {requester_name} ({requester_role})</p>
+        <p style="margin: 3px 0;"><strong>Department:</strong> {requester_department}</p>
+        <p style="margin: 3px 0;"><strong>Email:</strong> <a href="mailto:{requester_email}">{requester_email}</a></p>
     </div>
-    """
+
+    <div style="background-color: #edf2f7; padding: 14px 18px; border-left: 4px solid #4a5568; border-radius: 4px; margin: 16px 0;">
+        <h4 style="margin: 0 0 8px 0; color: #2d3748;">Venue & Schedule</h4>
+        <p style="margin: 3px 0;"><strong>Venue:</strong> {venue_name} (Capacity: {venue_capacity})</p>
+        <p style="margin: 3px 0;"><strong>Premises:</strong> {premises_name}</p>
+        <p style="margin: 3px 0;"><strong>Date:</strong> {date}</p>
+        <p style="margin: 3px 0;"><strong>Time Slot:</strong> {start_time} &ndash; {end_time}</p>
+        <p style="margin: 3px 0;"><strong>Purpose:</strong> {purpose}</p>
+    </div>
+
+    <p>Please log in to the administrative venue portal to review and approve or reject this booking request.</p>
+    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
+    <small style="color: #718096;">COEP Tech Venue Booking System &bull; Automatic Notification Service</small>
+</div>"""
+
+
+def generate_email_content(booking: Booking = None, optional_note: str = None):
+    """Generates recipient info, subject line, plain text, and HTML body using template placeholders."""
+    venue = booking.venue if booking else None
+    premises = venue.premises if venue else None
+    user = booking.user if booking else None
+    user_dept = user.department if (user and hasattr(user, "department")) else None
+
+    authority_name = premises.authority_name if premises else "Pradeep Deshmukh"
+    authority_email = premises.authority_email if premises else "hod.comp@coep.ac.in"
+    premises_name = premises.name if premises else "New Department of Computer Science and Engineering"
+
+    requester_name = user.name if user else "Ada Lovelace"
+    requester_role = user.role.capitalize() if (user and user.role) else "Student"
+    requester_department = (user_dept.name if user_dept else None) or "Computer Science and Engineering"
+    requester_email = user.college_email if user else "ada.lovelace@coep.ac.in"
+
+    venue_name = venue.name if venue else "NC 27"
+    venue_capacity = venue.capacity if venue else 70
+
+    date_str = booking.date.strftime("%Y-%m-%d") if (booking and hasattr(booking, "date")) else "2026-11-15"
+    start_time_str = booking.start_time.strftime("%H:%M") if (booking and hasattr(booking, "start_time")) else "14:00"
+    end_time_str = booking.end_time.strftime("%H:%M") if (booking and hasattr(booking, "end_time")) else "16:00"
+
+    purpose_str = optional_note.strip() if optional_note else "Academic seminar and project demonstration"
+
+    context = {
+        "authority_name": authority_name,
+        "authority_email": authority_email,
+        "premises_name": premises_name,
+        "requester_name": requester_name,
+        "requester_role": requester_role,
+        "requester_department": requester_department,
+        "requester_email": requester_email,
+        "venue_name": venue_name,
+        "venue_capacity": venue_capacity,
+        "date": date_str,
+        "start_time": start_time_str,
+        "end_time": end_time_str,
+        "purpose": purpose_str,
+    }
+
+    subject = EMAIL_SUBJECT_TEMPLATE.format(**context)
+    body_text = EMAIL_TEXT_TEMPLATE.format(**context)
+    body_html = EMAIL_HTML_TEMPLATE.format(**context)
 
     recipient_info = {
         "authority_name": authority_name,
         "authority_email": authority_email,
-        "premises_name": premises_name
+        "premises_name": premises_name,
     }
 
     return recipient_info, subject, body_text, body_html
@@ -103,33 +149,16 @@ def preview_email(booking_id: int):
             "body_html": body_html
         }), 200
 
-    # Fallback Stub Preview (when booking not in DB or testing frontend dummy IDs)
-    dummy_recipient = {
-        "authority_name": "Pradeep Deshmukh",
-        "authority_email": "hod.comp@coep.ac.in",
-        "premises_name": "New Department of Computer Science and Engineering"
-    }
-    dummy_subject = f"Venue Booking Request: NC 27 on 2026-11-15 (Booking #{booking_id})"
-    dummy_text = (
-        f"Dear {dummy_recipient['authority_name']},\n\n"
-        f"Ada Lovelace (ada.lovelace@coep.ac.in) has submitted a booking request for NC 27 "
-        f"on 2026-11-15 from 14:00 to 16:00.\n\n"
-        f"Please log in to the administrative portal to review and approve or reject this reservation.\n\n"
-        f"Regards,\nCOEP Venue Booking Notification Service"
-    )
-    dummy_html = (
-        f"<p>Dear {dummy_recipient['authority_name']},</p>"
-        f"<p><strong>Ada Lovelace</strong> has submitted a booking request for <strong>NC 27</strong> "
-        f"on <strong>2026-11-15</strong> from <strong>14:00</strong> to <strong>16:00</strong>.</p>"
-    )
+    # Fallback Stub Preview using formal template placeholders
+    recipient_info, subject, body_text, body_html = generate_email_content(None)
 
     return jsonify({
         "success": True,
         "booking_id": booking_id,
-        "recipient": dummy_recipient,
-        "subject": dummy_subject,
-        "body_text": dummy_text,
-        "body_html": dummy_html
+        "recipient": recipient_info,
+        "subject": subject,
+        "body_text": body_text,
+        "body_html": body_html
     }), 200
 
 
