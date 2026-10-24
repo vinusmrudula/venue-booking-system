@@ -320,11 +320,15 @@ Every error in the API strictly returns the following JSON structure with a corr
 ### 4.1 Check Venue Availability
 * **Endpoint:** `GET /api/availability` *(or `GET /api/venues/{venue_id}/availability`)*
 * **Requires Auth:** No
+* **Description:** Checks availability. When given a specific `venue_id`, returns detailed booked slots. When queried with search filters (`category`, `department`, `capacity`), returns venues grouped by premises with their overall status.
 * **Query Parameters:**
-  * `venue_id` *(integer, required)*: e.g. `1`
   * `date` *(string, required)*: `YYYY-MM-DD`, e.g. `2026-11-15`
+  * `venue_id` *(integer, optional)*: e.g. `1` (for detailed slots of a single venue)
+  * `category` *(string, optional)*: e.g. `"classroom"`
+  * `department` *(string/integer, optional)*: e.g. `"Computer Science and Engineering"`
+  * `capacity` *(integer, optional)*: e.g. `50`
 
-#### Success Response (`200 OK`)
+#### Success Response A — Single Venue (`200 OK`)
 ```json
 {
   "success": true,
@@ -343,13 +347,48 @@ Every error in the API strictly returns the following JSON structure with a corr
 }
 ```
 
+#### Success Response B — Multi-Venue Search Grouped by Premises (`200 OK`)
+```json
+{
+  "success": true,
+  "date": "2026-11-15",
+  "filters_applied": {
+    "category": "classroom",
+    "department": null,
+    "capacity": 50
+  },
+  "premises": [
+    {
+      "premises_id": 2,
+      "premises_name": "New Department of Computer Science and Engineering (New CSE)",
+      "venues": [
+        {
+          "id": 1,
+          "name": "NC 27",
+          "category": "classroom",
+          "capacity": 70,
+          "status": "available"
+        },
+        {
+          "id": 2,
+          "name": "NC 28",
+          "category": "classroom",
+          "capacity": 70,
+          "status": "booked"
+        }
+      ]
+    }
+  ]
+}
+```
+
 #### Error Example (`400 Bad Request`)
 ```json
 {
   "success": false,
   "error": {
     "code": "MISSING_PARAM",
-    "message": "Both 'venue_id' and 'date' query parameters are required.",
+    "message": "Query parameter 'date' is required (format: YYYY-MM-DD).",
     "details": null
   }
 }

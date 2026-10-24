@@ -14,3 +14,11 @@ class Config:
 
     # Disable modification tracking to save resources and remove warnings
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # Email configuration (Flask-Mail)
+    MAIL_SERVER = os.getenv("MAIL_SERVER", "localhost")
+    MAIL_PORT = int(os.getenv("MAIL_PORT", 25))
+    MAIL_USE_TLS = os.getenv("MAIL_USE_TLS", "false").lower() in ["true", "1", "yes"]
+    MAIL_USERNAME = os.getenv("MAIL_USERNAME", None)
+    MAIL_PASSWORD = os.getenv("MAIL_PASSWORD", None)
+    MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER", "noreply@venuebooking.coep.ac.in")
