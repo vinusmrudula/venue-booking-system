@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # BookIt - College Facility & Venue Booking System
 
 A web platform designed to simplify reserving classrooms, seminar halls, auditoriums, and labs across college departments, complete with real-time availability checks, clash prevention, and administrative approval workflows.
@@ -184,4 +183,3 @@ The Flask backend currently provides a basic API health-check endpoint. Venue av
 
 ### Email Configuration
 Email settings will be configured using environment variables. Keep credentials in a local `.env` file and never commit real credentials to GitHub.
->>>>>>> 3959de43f8843c791b23fb3248c1d3e63bc649c6
