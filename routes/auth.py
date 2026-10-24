@@ -26,7 +26,17 @@ def register():
     college_email = data.get("college_email", "").strip().lower()
     password = data.get("password", "")
     role = data.get("role", "student").strip().lower()
+
+    # Supports either 'department_id' (integer) or 'department' (ID or name string)
     department_id = data.get("department_id")
+    if department_id is None and "department" in data:
+        dept_val = data.get("department")
+        if isinstance(dept_val, int) or (isinstance(dept_val, str) and dept_val.isdigit()):
+            department_id = int(dept_val)
+        elif isinstance(dept_val, str) and dept_val.strip():
+            dept_obj = Department.query.filter(Department.name.ilike(f"%{dept_val.strip()}%")).first()
+            if dept_obj:
+                department_id = dept_obj.id
 
     # Validations
     if not name:
@@ -67,8 +77,11 @@ def register():
     session["user_id"] = user.id
     session["user_role"] = user.role
 
+    token = f"token_{user.id}"
+
     return jsonify({
         "message": "User registered successfully.",
+        "token": token,
         "user": user.to_dict()
     }), 201
 
@@ -96,8 +109,11 @@ def login():
     session["user_id"] = user.id
     session["user_role"] = user.role
 
+    token = f"token_{user.id}"
+
     return jsonify({
         "message": "Login successful.",
+        "token": token,
         "user": user.to_dict()
     }), 200
 

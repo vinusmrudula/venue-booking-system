@@ -11,9 +11,14 @@ This document serves as the single source of truth for backend and frontend engi
 * **Content-Type:** `application/json` (required on all `POST` and `PATCH` requests)
 
 ### 1.2 Authentication & Session Headers
-Endpoints marked as **Requires Auth** accept authentication through either:
-1. **Browser Session Cookie:** Set automatically on successful login/registration (`HttpOnly` session cookie).
-2. **Testing / Direct Header:** `X-User-Id: <integer_id>` (supported on all authenticated routes for easy testing in Postman, Swagger, or cURL without managing cookies).
+Endpoints marked as **Requires Auth** accept authentication through either of the following mechanisms:
+1. **Bearer Token Header (Recommended for React / Vue / SPA frontends):**
+   ```http
+   Authorization: Bearer <token>
+   ```
+   Returned in the response body of `POST /api/auth/login` and `POST /api/auth/register`. Store this token in `sessionStorage` or `localStorage` and attach it to subsequent API calls.
+2. **Browser Session Cookie:** Set automatically on successful login/registration (`HttpOnly` session cookie). Supported out of the box when `credentials: "include"` is set in `fetch` or `withCredentials: true` in Axios.
+3. **Testing / Direct Header:** `X-User-Id: <integer_id>` (supported on all authenticated routes for quick manual testing in Postman, Swagger, or cURL without managing tokens or cookies).
 
 ### 1.3 Date & Time Standards
 To eliminate time zone and locale formatting discrepancies:
@@ -41,10 +46,31 @@ Every error in the API strictly returns the following JSON structure with a corr
 | **`200 OK`** | Success | Successful retrieval, email dispatch, or update. |
 | **`201 Created`** | Created | Resource successfully created (`POST /api/bookings`, `POST /api/auth/register`). |
 | **`400 Bad Request`** | Input Validation Error | Missing required fields, bad date/time format, or `start_time >= end_time`. |
-| **`401 Unauthorized`** | Authentication Missing | Missing active session or valid `X-User-Id` header. |
+| **`401 Unauthorized`** | Authentication Missing | Missing active session, invalid token, or missing `Authorization` header. |
 | **`403 Forbidden`** | Insufficient Permissions | User does not have the required role (e.g. student accessing admin routes). |
 | **`404 Not Found`** | Missing Resource | The specified `venue_id` or `booking_id` does not exist. |
 | **`409 Conflict`** | Business Logic / Clash | **Slot clash!** Another active booking already occupies that time slot. |
+
+### 1.5 Endpoint Access & Authentication Matrix
+| Endpoint | Method | Requires Auth? | Allowed Roles / Notes |
+| :--- | :---: | :---: | :--- |
+| `/api/auth/register` | `POST` | **No** | Public registration (returns token + user profile) |
+| `/api/auth/login` | `POST` | **No** | Public login (returns token + sets cookie) |
+| `/api/auth/logout` | `POST` | **Yes** | Any logged-in user |
+| `/api/auth/me` | `GET` | **Yes** | Any logged-in user |
+| `/api/departments` | `GET` | **No** | Public metadata |
+| `/api/premises` | `GET` | **No** | Public metadata |
+| `/api/venues/filter-options` | `GET` | **No** | Public search dropdown filters |
+| `/api/venues` | `GET` | **No** | Public search & catalog |
+| `/api/venues/{id}` | `GET` | **No** | Public venue details |
+| `/api/availability` | `GET` | **No** | Public date/venue availability check |
+| `/api/bookings` | `POST` | **Yes** | Student, Faculty, Admin |
+| `/api/bookings/my` (or `/mine`) | `GET` | **Yes** | Current user’s own bookings |
+| `/api/bookings/{id}/email-preview` | `GET` | **Yes** | Booking owner or Admin |
+| `/api/bookings/{id}/send-email` | `POST` | **Yes** | Booking owner or Admin |
+| `/api/admin/bookings` | `GET` | **Yes** | **Admin only** |
+| `/api/admin/users` | `GET` | **Yes** | **Admin only** |
+| `/api/bookings/{id}/status` | `PATCH` | **Yes** | **Admin only** (Approvals/Rejections) |
 
 ---
 
@@ -53,7 +79,7 @@ Every error in the API strictly returns the following JSON structure with a corr
 ### 2.1 Register New Account
 * **Endpoint:** `POST /api/auth/register`
 * **Requires Auth:** No
-* **Description:** Creates a new college user account, hashes password, and automatically establishes a session.
+* **Description:** Creates a new college user account, hashes password, and automatically establishes a session (returning an authentication token).
 
 #### Request Body
 ```json
@@ -62,16 +88,20 @@ Every error in the API strictly returns the following JSON structure with a corr
   "college_email": "ada.lovelace@coep.ac.in",
   "password": "SecurePassword123!",
   "role": "student",
-  "department_id": 1
+  "department": 1
 }
 ```
+* `name` *(required, string)*: User's full name.
+* `college_email` *(required, string)*: Official college email (`@coep.ac.in`).
+* `password` *(required, string)*: Minimum 6 characters.
 * `role` *(optional, string)*: `"student"` (default), `"faculty"`, or `"admin"`.
-* `department_id` *(optional, integer)*: Valid department ID from `/api/departments`.
+* `department` *(optional, integer or string)*: Department ID integer (e.g. `1`) or name string. Also accepts key `department_id`.
 
 #### Success Response (`201 Created`)
 ```json
 {
   "message": "User registered successfully.",
+  "token": "token_5",
   "user": {
     "id": 5,
     "name": "Ada Lovelace",
@@ -100,7 +130,7 @@ Every error in the API strictly returns the following JSON structure with a corr
 ### 2.2 Sign In
 * **Endpoint:** `POST /api/auth/login`
 * **Requires Auth:** No
-* **Description:** Verifies user credentials and starts an authenticated session.
+* **Description:** Verifies user credentials and starts an authenticated session, returning an authentication token.
 
 #### Request Body
 ```json
@@ -114,6 +144,7 @@ Every error in the API strictly returns the following JSON structure with a corr
 ```json
 {
   "message": "Login successful.",
+  "token": "token_5",
   "user": {
     "id": 5,
     "name": "Ada Lovelace",
@@ -141,7 +172,7 @@ Every error in the API strictly returns the following JSON structure with a corr
 
 ### 2.3 Sign Out
 * **Endpoint:** `POST /api/auth/logout`
-* **Requires Auth:** Yes
+* **Requires Auth:** Yes (`Authorization: Bearer <token>` or session cookie)
 * **Description:** Clears the active user session.
 
 #### Success Response (`200 OK`)
@@ -155,8 +186,13 @@ Every error in the API strictly returns the following JSON structure with a corr
 
 ### 2.4 Get Current User Profile
 * **Endpoint:** `GET /api/auth/me`
-* **Requires Auth:** Yes
+* **Requires Auth:** Yes (`Authorization: Bearer <token>` or session cookie)
 * **Description:** Returns the logged-in user's profile info.
+
+#### Request Headers
+```http
+Authorization: Bearer token_5
+```
 
 #### Success Response (`200 OK`)
 ```json
