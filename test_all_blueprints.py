@@ -118,6 +118,22 @@ assert res.status_code == 200, f"Expected 200, got {res.status_code}: {res.get_j
 send_data = res.get_json()
 print(f"[PASS] POST /api/bookings/{new_booking['id']}/send-email -> Dispatched to {send_data['recipient_email']} at {send_data['sent_at']}.")
 
+# 9. Test Email Fallback Path (Failure Simulation for mailto)
+res = client.post("/api/bookings/999/send-email")
+assert res.status_code == 500, f"Expected 500, got {res.status_code}: {res.get_json()}"
+err_data = res.get_json()
+assert err_data["error"]["code"] == "EMAIL_DISPATCH_FAILED"
+assert "mailto_link" in err_data["error"]["details"]
+print("[PASS] POST /api/bookings/999/send-email (Simulated failure) -> Returned mailto fallback link.")
+
+# Test Stub Email Preview for dummy booking
+res = client.get("/api/bookings/999/email-preview")
+assert res.status_code == 200, f"Expected 200, got {res.status_code}: {res.get_json()}"
+stub_preview = res.get_json()
+assert stub_preview["success"] is True
+assert "authority_email" in stub_preview["recipient"]
+print("[PASS] GET /api/bookings/999/email-preview (Stub preview) -> Loaded dummy recipient and template.")
+
 print("\n" + "=" * 70)
 print("ALL BLUEPRINTS AND HEALTH CHECK TESTED WITH 100% SUCCESS!")
 print("=" * 70)

@@ -288,3 +288,17 @@ def get_booking_details(booking_id: int):
         "booking": booking.to_dict()
     }), 200
 
+
+@bookings_bp.route("/<int:booking_id>/email-preview", methods=["GET"])
+def booking_email_preview_endpoint(booking_id: int):
+    """Stub endpoint returning email preview for authority notification."""
+    from routes.email import preview_email
+    return preview_email(booking_id)
+
+
+@bookings_bp.route("/<int:booking_id>/send-email", methods=["POST"])
+def booking_send_email_endpoint(booking_id: int):
+    """Stub endpoint returning success or fake mailto fallback error."""
+    from routes.email import send_email
+    return send_email(booking_id)
+

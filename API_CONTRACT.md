@@ -519,6 +519,23 @@ Every error in the API strictly returns the following JSON structure with a corr
 }
 ```
 
+#### Error Example — Simulated Delivery Failure (`500 Internal Server Error`)
+Used by frontend to test fallback to opening the user's default email client (`mailto:` link). Triggered by `booking_id: 999` or body `{"force_fail": true}`:
+```json
+{
+  "success": false,
+  "error": {
+    "code": "EMAIL_DISPATCH_FAILED",
+    "message": "Automated email delivery failed. Please use your email client (mailto link) to notify the authority.",
+    "details": {
+      "authority_name": "Pradeep Deshmukh",
+      "authority_email": "hod.comp@coep.ac.in",
+      "mailto_link": "mailto:hod.comp@coep.ac.in?subject=Venue%20Booking%20Request%3A%20NC%2027&body=Dear%20Pradeep%20Deshmukh%2C%0APlease%20review%20my%20venue%20booking%20request."
+    }
+  }
+}
+```
+
 ---
 
 ### 4.5 View My Previous Bookings
