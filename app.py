@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from config import Config
-from extensions import db, mail
+from extensions import cors, db, mail
 from models import Department, Premises
 from routes import (
     admin_bp,
@@ -22,6 +22,15 @@ def create_app(config_class=Config):
     # Initialize extensions
     db.init_app(app)
     mail.init_app(app)
+    if cors:
+        cors.init_app(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
+    else:
+        @app.after_request
+        def add_cors_headers(response):
+            response.headers["Access-Control-Allow-Origin"] = "*"
+            response.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization,X-User-Id"
+            response.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+            return response
 
     # Register blueprints for modular features
     app.register_blueprint(auth_bp)
