@@ -1869,6 +1869,40 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 }
 .status-pill.available { background: var(--success-bg); color: var(--success); }
 .status-pill.booked { background: var(--error-bg); color: var(--error); }
+.status-pill.status-pending { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+.status-pill.rejected { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+
+.btn-approve {
+  background: var(--teal-700);
+  color: #fff;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.btn-approve:hover { background: var(--teal-900); }
+
+.btn-reject {
+  background: #dc2626;
+  color: #fff;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.btn-reject:hover { background: #b91c1c; }
 
 /* Empty state */
 .empty-state {

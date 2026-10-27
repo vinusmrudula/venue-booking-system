@@ -15,7 +15,7 @@ import urllib.parse
 import json
 import os
 
-PORT = 5000
+PORT = 5050
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 # Complete 13-Department Campus Facility Database
@@ -313,6 +313,12 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
     self._send_cors_headers()
     self.end_headers()
 
+  def end_headers(self):
+    self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+    self.send_header("Pragma", "no-cache")
+    self.send_header("Expires", "0")
+    super().end_headers()
+
   def do_GET(self):
     parsed_url = urllib.parse.urlparse(self.path)
     path = parsed_url.path
@@ -414,7 +420,9 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
     self.end_headers()
 
 if __name__ == "__main__":
-  server_address = ("", PORT)
+  server_address = ("127.0.0.1", PORT)
+  # Allow reusing port address immediately upon restart
+  socketserver.TCPServer.allow_reuse_address = True
   with socketserver.TCPServer(server_address, CustomHandler) as httpd:
     print(f"==================================================")
     print(f" Campus Venue Booking Server Running!")

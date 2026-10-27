@@ -658,6 +658,7 @@
               <button type="button" class="btn-demo-fill" data-email="aman.student@college.ac.in" style="font-size: 0.75rem; padding: 0.3rem 0.6rem; background: #ffffff; border: 1px solid #99f6e4; border-radius: 4px; cursor: pointer; color: #0f5450; font-weight: 600;">🎓 Aman (Student)</button>
               <button type="button" class="btn-demo-fill" data-email="sunita.faculty@college.ac.in" style="font-size: 0.75rem; padding: 0.3rem 0.6rem; background: #ffffff; border: 1px solid #99f6e4; border-radius: 4px; cursor: pointer; color: #0f5450; font-weight: 600;">👩‍🏫 Dr. Sunita (Faculty)</button>
               <button type="button" class="btn-demo-fill" data-email="purva.patel@college.ac.in" style="font-size: 0.75rem; padding: 0.3rem 0.6rem; background: #ffffff; border: 1px solid #99f6e4; border-radius: 4px; cursor: pointer; color: #0f5450; font-weight: 600;">⭐ Purva (Student Lead)</button>
+              <button type="button" class="btn-demo-fill" data-email="admin.cse@college.ac.in" style="font-size: 0.75rem; padding: 0.3rem 0.6rem; background: #ffffff; border: 1px solid #99f6e4; border-radius: 4px; cursor: pointer; color: #0f5450; font-weight: 600;">🛡️ Prof. Rajesh (Dept Admin)</button>
             </div>
           </div>
         </form>
@@ -870,33 +871,36 @@
   <div class="modal-overlay" id="prev-bookings-modal">
     <div class="history-modal-card">
       <div class="history-modal-header">
-        <h2>My Booking History &amp; Requisitions</h2>
+        <h2 id="history-modal-title">My Booking History &amp; Requisitions</h2>
         <button class="modal-close-btn" id="close-history-modal-btn">✕</button>
       </div>
 
-      <div class="table-wrapper">
-        <table class="history-table">
-          <thead>
-            <tr>
-              <th>Booking ID</th>
-              <th>Venue</th>
-              <th>Department</th>
-              <th>Date</th>
-              <th>Slot</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="history-table-body"></tbody>
-        </table>
+      <!-- Dynamic Content Wrapper for Student / Admin Bookings -->
+      <div id="history-modal-content">
+        <div class="table-wrapper">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Booking ID</th>
+                <th>Venue</th>
+                <th>Department</th>
+                <th>Date</th>
+                <th>Slot</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="history-table-body"></tbody>
+          </table>
+        </div>
+
+        <div class="empty-state" id="history-empty" style="display:none">
+          <div class="empty-icon">📋</div>
+          <p>No booking history found for this account.</p>
+        </div>
       </div>
 
-      <div class="empty-state" id="history-empty" style="display:none">
-        <div class="empty-icon">📋</div>
-        <p>No booking history found for this account.</p>
-      </div>
-
-      <div style="text-align:right; margin-top:1rem">
+      <div style="text-align:right; margin-top:1.25rem">
         <button class="btn btn-outline" id="btn-close-history">Close</button>
       </div>
     </div>

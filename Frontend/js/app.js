@@ -11,10 +11,6 @@
  * - Pure Vanilla JavaScript with clear, human-readable architecture
  * ============================================================================
  */
-console.log("SCRIPT STARTED");
-console.log("SCRIPT STARTED");
-
-
 // Application State Store
 const AppState = {
   currentUser: null,
@@ -194,6 +190,8 @@ const DOM = {
 
   // Previous Bookings Modal
   prevBookingsModal:      document.getElementById("prev-bookings-modal"),
+  historyModalTitle:      document.getElementById("history-modal-title"),
+  historyModalContent:    document.getElementById("history-modal-content"),
   closeHistoryModalBtn:   document.getElementById("close-history-modal-btn"),
   btnCloseHistory:        document.getElementById("btn-close-history"),
   historyTableBody:       document.getElementById("history-table-body"),
@@ -300,25 +298,44 @@ function updateNavAuthUI() {
 // ============================================================================
 function openAuthModal(tab = "signin") {
   clearAuthErrors();
-  DOM.authModal.classList.add("active");
+  const modal = DOM.authModal || document.getElementById("auth-modal");
+  if (modal) modal.classList.add("active");
   switchAuthTab(tab);
   if (tab === "signin") {
-    setTimeout(() => DOM.signinEmail.focus(), 60);
+    setTimeout(() => {
+      const emailEl = DOM.signinEmail || document.getElementById("signin-email");
+      if (emailEl) emailEl.focus();
+    }, 60);
   } else {
-    setTimeout(() => DOM.regName.focus(), 60);
+    setTimeout(() => {
+      const nameEl = DOM.regName || document.getElementById("reg-name");
+      if (nameEl) nameEl.focus();
+    }, 60);
   }
 }
 
 function closeAuthModal() {
-  DOM.authModal.classList.remove("active");
+  const modal = DOM.authModal || document.getElementById("auth-modal");
+  if (modal) modal.classList.remove("active");
   clearAuthErrors();
 }
 
 function switchAuthTab(tab) {
-  DOM.tabSignin.classList.toggle("active", tab === "signin");
-  DOM.tabRegister.classList.toggle("active", tab === "register");
-  DOM.panelSignin.classList.toggle("active", tab === "signin");
-  DOM.panelRegister.classList.toggle("active", tab === "register");
+  const tabSignin = DOM.tabSignin || document.getElementById("tab-signin");
+  const tabRegister = DOM.tabRegister || document.getElementById("tab-register");
+  const panelSignin = DOM.panelSignin || document.getElementById("panel-signin");
+  const panelRegister = DOM.panelRegister || document.getElementById("panel-register");
+
+  if (tabSignin) tabSignin.classList.toggle("active", tab === "signin");
+  if (tabRegister) tabRegister.classList.toggle("active", tab === "register");
+  if (panelSignin) {
+    panelSignin.classList.toggle("active", tab === "signin");
+    panelSignin.style.display = tab === "signin" ? "block" : "none";
+  }
+  if (panelRegister) {
+    panelRegister.classList.toggle("active", tab === "register");
+    panelRegister.style.display = tab === "register" ? "block" : "none";
+  }
 }
 
 function openOtpModal() {
@@ -1007,6 +1024,7 @@ DOM.btnSendEmailConfirm.addEventListener("click", async () => {
       slotLabel: slotLabel,
       bookedBy: user.name,
       applicantEmail: user.email,
+      applicantRole: user.role || "student",
       inchargeEmail: venue.inchargeEmail,
       purpose: "Classroom / Seminar Activity"
     });
@@ -1017,10 +1035,10 @@ DOM.btnSendEmailConfirm.addEventListener("click", async () => {
     DOM.ticketVenue.textContent = `${bookingResult.venueCode} (${bookingResult.venueName})`;
     DOM.ticketDept.textContent = bookingResult.dept;
     DOM.ticketDate.textContent = bookingResult.date;
-    DOM.ticketSlot.textContent = bookingResult.timeSlot;
+    DOM.ticketSlot.textContent = `${bookingResult.timeSlot} (Pending Approval)`;
 
     DOM.bookingSuccessModal.classList.add("active");
-    showToast(`Booking Confirmed! Requisition sent to ${venue.inchargeEmail}`);
+    showToast(`Requisition Submitted! Sent for Department Admin approval.`);
 
     executeSearch(); // Refresh results to reflect newly booked slot
   } catch (err) {
@@ -1032,86 +1050,425 @@ DOM.btnSendEmailConfirm.addEventListener("click", async () => {
 });
 
 // ============================================================================
-// PREVIOUS BOOKINGS HISTORY MODAL
+// PREVIOUS BOOKINGS & DEPARTMENT ADMIN REQUISITIONS MODAL
 // ============================================================================
 async function openPreviousBookingsModal() {
-  DOM.prevBookingsModal.classList.add("active");
-  DOM.historyTableBody.innerHTML = `
-    <tr>
-      <td colspan="7" style="text-align:center; padding:2rem;">
+  const user = AppState.currentUser || ApiService.getCurrentUser();
+  if (!user) {
+    showToast("Please sign in to view your bookings.", "error");
+    openAuthModal("signin");
+    return;
+  }
+
+  const modal = DOM.prevBookingsModal || document.getElementById("prev-bookings-modal");
+  const modalTitle = DOM.historyModalTitle || document.getElementById("history-modal-title");
+  const contentContainer = DOM.historyModalContent || document.getElementById("history-modal-content");
+
+  if (modal) modal.classList.add("active");
+
+  if (contentContainer) {
+    contentContainer.innerHTML = `
+      <div style="text-align:center; padding:2.5rem 1rem;">
         <div class="spinner spinner-teal" style="margin:0 auto;"></div>
-        <div style="margin-top:0.5rem; color:var(--text-sec);">Loading your reservations...</div>
-      </td>
-    </tr>
-  `;
-  DOM.historyEmpty.style.display = "none";
+        <div style="margin-top:0.75rem; color:var(--text-sec); font-weight:500;">Retrieving booking records &amp; requisitions...</div>
+      </div>
+    `;
+  }
 
   try {
-    const email = AppState.currentUser ? AppState.currentUser.email : "";
-    const bookings = await ApiService.getUserBookings(email);
+    const allBookings = await ApiService.getAllBookings();
 
-    if (!bookings || bookings.length === 0) {
-      DOM.historyTableBody.innerHTML = "";
-      DOM.historyEmpty.style.display = "block";
-      return;
-    }
+    if (user.role === "admin") {
+      // -------------------------------------------------------------
+      // DEPARTMENT ADMIN PORTAL
+      // -------------------------------------------------------------
+      if (modalTitle) modalTitle.innerHTML = `🏛️ Department Requisition &amp; Approval Portal`;
 
-    DOM.historyEmpty.style.display = "none";
-    DOM.historyTableBody.innerHTML = bookings
-      .map((b) => {
-        const isCancelled = b.status === "Cancelled";
-        return `
-          <tr>
-            <td><strong>#${b.id}</strong></td>
-            <td>
-              <div style="font-weight:600; color:var(--teal-900);">${b.venueCode}</div>
-              <div style="font-size:0.75rem; color:var(--text-sec);">${b.venueName}</div>
-            </td>
-            <td>${b.dept.split("(")[0]}</td>
-            <td>${b.date}</td>
-            <td><span class="tag-badge">${b.timeSlot}</span></td>
-            <td>
-              <span class="status-pill ${isCancelled ? "booked" : "available"}" style="font-size:0.72rem;">
-                ${b.status}
-              </span>
-            </td>
-            <td>
-              ${
-                !isCancelled
-                  ? `<button class="btn btn-danger btn-sm cancel-booking-btn" data-id="${b.id}" style="padding:0.25rem 0.6rem; font-size:0.75rem;">Cancel</button>`
-                  : `<span style="font-size:0.8rem; color:var(--text-muted);">&mdash;</span>`
-              }
-            </td>
-          </tr>
-        `;
-      })
-      .join("");
-
-    // Cancel click handler
-    document.querySelectorAll(".cancel-booking-btn").forEach((btn) => {
-      btn.addEventListener("click", async () => {
-        const bookingId = btn.getAttribute("data-id");
-        if (confirm(`Are you sure you want to cancel booking #${bookingId}?`)) {
-          try {
-            await ApiService.cancelBooking(bookingId);
-            showToast(`Booking #${bookingId} cancelled.`);
-            openPreviousBookingsModal();
-            executeSearch();
-          } catch (e) {
-            showToast("Failed to cancel booking.", "error");
-          }
-        }
+      // Filter pending requests for this department (or all if Central/none)
+      const pendingList = allBookings.filter((b) => {
+        const isPending = b.status === "Pending Approval" || b.status === "Pending";
+        if (!isPending) return false;
+        if (!user.dept || user.dept === "all" || user.dept === "Academic Complex") return true;
+        return b.dept && (b.dept.toLowerCase().includes(user.dept.toLowerCase()) || user.dept.toLowerCase().includes(b.dept.toLowerCase()));
       });
-    });
+
+      // Filter processed bookings for this department
+      const historyList = allBookings.filter((b) => {
+        const isPending = b.status === "Pending Approval" || b.status === "Pending";
+        if (isPending) return false;
+        if (!user.dept || user.dept === "all" || user.dept === "Academic Complex") return true;
+        return b.dept && (b.dept.toLowerCase().includes(user.dept.toLowerCase()) || user.dept.toLowerCase().includes(b.dept.toLowerCase()));
+      });
+
+      contentContainer.innerHTML = `
+        <!-- Admin Profile Banner -->
+        <div style="background:#f0fdfa; border:1px solid #99f6e4; border-radius:8px; padding:0.85rem 1rem; margin-bottom:1.25rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+          <div>
+            <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:#0f766e; font-weight:800;">Department Administrator View</div>
+            <div style="font-weight:700; color:#0c4340; font-size:1.05rem;">🛡️ ${user.name}</div>
+            <div style="font-size:0.8rem; color:#134e4a;">${user.dept}</div>
+          </div>
+          <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+            <span class="tag-badge" style="background:#fef3c7; color:#92400e; border-color:#fcd34d; font-weight:700;">⚡ ${pendingList.length} Pending Approval</span>
+            <span class="tag-badge" style="background:#f1f5f9; color:#475569; border-color:#cbd5e1;">📋 ${historyList.length} Processed</span>
+          </div>
+        </div>
+
+        <!-- SECTION 1: PENDING APPROVAL (ADMIN ACTION) -->
+        <div style="margin-bottom:1.75rem;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem;">
+            <h3 style="font-size:0.96rem; font-weight:800; color:#92400e; margin:0; display:flex; align-items:center; gap:0.4rem;">
+              <span>⏳</span> Pending Requisitions Awaiting Your Approval (${pendingList.length})
+            </h3>
+          </div>
+          <p style="font-size:0.8rem; color:var(--text-sec); margin-bottom:0.75rem;">
+            Review reservation requests submitted by students and faculty for facilities in your department. Accepting a request confirms the reservation; rejecting it frees the slot.
+          </p>
+
+          ${
+            pendingList.length === 0
+              ? `<div style="background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; padding:1.25rem; text-align:center; color:#64748b; font-size:0.85rem;">
+                  ✓ No pending requisitions for ${user.dept}. All venue requests have been reviewed!
+                 </div>`
+              : `<div class="table-wrapper">
+                  <table class="history-table">
+                    <thead>
+                      <tr>
+                        <th>Req ID</th>
+                        <th>Applicant</th>
+                        <th>Venue</th>
+                        <th>Date &amp; Slot</th>
+                        <th>Purpose</th>
+                        <th>Status</th>
+                        <th style="text-align:center; min-width:150px;">Admin Decision</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${pendingList
+                        .map(
+                          (b) => `
+                        <tr>
+                          <td><strong>#${b.id}</strong></td>
+                          <td>
+                            <div style="font-weight:700; color:var(--teal-900);">${b.bookedBy || "Applicant"}</div>
+                            <div style="font-size:0.75rem; color:var(--text-sec);">${b.applicantEmail || ""}</div>
+                            <span class="tag-badge" style="font-size:0.68rem; padding:0.1rem 0.4rem; text-transform:uppercase;">${b.applicantRole || "student"}</span>
+                          </td>
+                          <td>
+                            <div style="font-weight:700; color:var(--teal-900);">${b.venueCode}</div>
+                            <div style="font-size:0.74rem; color:var(--text-sec);">${b.venueName}</div>
+                          </td>
+                          <td>
+                            <div style="font-weight:600;">${b.date}</div>
+                            <span class="tag-badge" style="font-size:0.72rem;">${b.timeSlot}</span>
+                          </td>
+                          <td style="font-size:0.8rem; color:var(--text-sec); max-width:170px;">${b.purpose || "Classroom / Seminar Activity"}</td>
+                          <td>
+                            <span class="status-pill status-pending" style="font-size:0.72rem;">⏳ Pending</span>
+                          </td>
+                          <td style="text-align:center; white-space:nowrap;">
+                            <button class="btn btn-approve btn-admin-approve" data-id="${b.id}" title="Approve and confirm this reservation">✓ Accept</button>
+                            <button class="btn btn-reject btn-admin-reject" data-id="${b.id}" title="Reject this requisition">✕ Reject</button>
+                          </td>
+                        </tr>
+                      `
+                        )
+                        .join("")}
+                    </tbody>
+                  </table>
+                </div>`
+          }
+        </div>
+
+        <!-- SECTION 2: DEPARTMENT BOOKING RECORDS -->
+        <div>
+          <h3 style="font-size:0.96rem; font-weight:800; color:var(--teal-900); margin-bottom:0.4rem; display:flex; align-items:center; gap:0.4rem;">
+            <span>📋</span> Processed Department Records (${historyList.length})
+          </h3>
+          <p style="font-size:0.8rem; color:var(--text-sec); margin-bottom:0.75rem;">
+            Archive of approved, rejected, and cancelled requisitions for your department facilities.
+          </p>
+
+          ${
+            historyList.length === 0
+              ? `<div style="background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; padding:1.25rem; text-align:center; color:#64748b; font-size:0.85rem;">
+                  No past records found for this department.
+                 </div>`
+              : `<div class="table-wrapper">
+                  <table class="history-table">
+                    <thead>
+                      <tr>
+                        <th>Req ID</th>
+                        <th>Applicant</th>
+                        <th>Venue</th>
+                        <th>Date &amp; Slot</th>
+                        <th>Status</th>
+                        <th>Review Log</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${historyList
+                        .map((b) => {
+                          const isConf = b.status === "Confirmed" || b.status === "Approved";
+                          const isRej = b.status === "Rejected";
+                          const statusClass = isConf ? "available" : isRej ? "rejected" : "booked";
+                          const statusLabel = isConf ? "✓ Confirmed" : isRej ? "✕ Rejected" : b.status;
+                          return `
+                          <tr>
+                            <td><strong>#${b.id}</strong></td>
+                            <td>
+                              <div style="font-weight:600;">${b.bookedBy || "Applicant"}</div>
+                              <div style="font-size:0.73rem; color:var(--text-sec);">${b.applicantEmail || ""}</div>
+                            </td>
+                            <td>
+                              <strong>${b.venueCode}</strong>
+                              <div style="font-size:0.74rem; color:var(--text-sec);">${b.venueName}</div>
+                            </td>
+                            <td>
+                              <div>${b.date}</div>
+                              <span class="tag-badge" style="font-size:0.7rem;">${b.timeSlot}</span>
+                            </td>
+                            <td>
+                              <span class="status-pill ${statusClass}" style="font-size:0.72rem;">${statusLabel}</span>
+                            </td>
+                            <td style="font-size:0.76rem; color:var(--text-sec);">
+                              ${b.decisionBy ? `Reviewed by ${b.decisionBy}` : (isConf ? "Approved" : isRej ? "Rejected" : b.status)}
+                            </td>
+                          </tr>
+                        `;
+                        })
+                        .join("")}
+                    </tbody>
+                  </table>
+                </div>`
+          }
+        </div>
+      `;
+
+      // Attach Admin Approve & Reject Listeners
+      contentContainer.querySelectorAll(".btn-admin-approve").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const bookingId = btn.getAttribute("data-id");
+          btn.disabled = true;
+          try {
+            await ApiService.approveBooking(bookingId, user.name);
+            showToast(`Requisition #${bookingId} ACCEPTED! Student account has been updated.`);
+            openPreviousBookingsModal();
+            if (typeof executeSearch === "function") executeSearch();
+          } catch (e) {
+            showToast("Failed to accept requisition.", "error");
+            btn.disabled = false;
+          }
+        });
+      });
+
+      contentContainer.querySelectorAll(".btn-admin-reject").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const bookingId = btn.getAttribute("data-id");
+          if (confirm(`Are you sure you want to REJECT requisition #${bookingId}? The time slot will become free for others.`)) {
+            btn.disabled = true;
+            try {
+              await ApiService.rejectBooking(bookingId, user.name);
+              showToast(`Requisition #${bookingId} REJECTED. Slot is now available.`);
+              openPreviousBookingsModal();
+              if (typeof executeSearch === "function") executeSearch();
+            } catch (e) {
+              showToast("Failed to reject requisition.", "error");
+              btn.disabled = false;
+            }
+          }
+        });
+      });
+
+    } else {
+      // -------------------------------------------------------------
+      // STUDENT / FACULTY APPLICANT VIEW
+      // -------------------------------------------------------------
+      if (modalTitle) modalTitle.innerHTML = `📋 My Booking History &amp; Requisitions`;
+
+      const userBookings = allBookings.filter(
+        (b) => b.applicantEmail && b.applicantEmail.toLowerCase() === user.email.toLowerCase()
+      );
+
+      const pendingBookings = userBookings.filter(
+        (b) => b.status === "Pending Approval" || b.status === "Pending"
+      );
+
+      const historyBookings = userBookings.filter(
+        (b) => b.status !== "Pending Approval" && b.status !== "Pending"
+      );
+
+      contentContainer.innerHTML = `
+        <!-- Applicant User Banner -->
+        <div style="background:#f0fdfa; border:1px solid #99f6e4; border-radius:8px; padding:0.85rem 1rem; margin-bottom:1.25rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+          <div>
+            <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:#0f766e; font-weight:800;">Applicant Dashboard</div>
+            <div style="font-weight:700; color:#0c4340; font-size:1.05rem;">👤 ${user.name}</div>
+            <div style="font-size:0.8rem; color:#134e4a;">${user.role.toUpperCase()} &bull; ${user.dept}</div>
+          </div>
+          <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+            <span class="tag-badge" style="background:#fef3c7; color:#92400e; border-color:#fcd34d; font-weight:700;">⏳ ${pendingBookings.length} Pending Approval</span>
+            <span class="tag-badge" style="background:#f1f5f9; color:#475569; border-color:#cbd5e1;">📋 ${historyBookings.length} Processed</span>
+          </div>
+        </div>
+
+        <!-- SECTION 1: PENDING APPROVAL FOR STUDENT -->
+        <div style="margin-bottom:1.75rem;">
+          <h3 style="font-size:0.96rem; font-weight:800; color:#92400e; margin-bottom:0.4rem; display:flex; align-items:center; gap:0.4rem;">
+            <span>⏳</span> Requisitions Pending Department Approval (${pendingBookings.length})
+          </h3>
+          <p style="font-size:0.8rem; color:var(--text-sec); margin-bottom:0.75rem;">
+            These facility requisitions have been dispatched to the Department Administration. As soon as the Department Admin accepts or rejects your request, the status updates here automatically.
+          </p>
+
+          ${
+            pendingBookings.length === 0
+              ? `<div style="background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; padding:1.25rem; text-align:center; color:#64748b; font-size:0.85rem;">
+                  No requisitions currently pending approval.
+                 </div>`
+              : `<div class="table-wrapper">
+                  <table class="history-table">
+                    <thead>
+                      <tr>
+                        <th>Req ID</th>
+                        <th>Venue</th>
+                        <th>Department</th>
+                        <th>Date</th>
+                        <th>Slot</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${pendingBookings
+                        .map(
+                          (b) => `
+                        <tr>
+                          <td><strong>#${b.id}</strong></td>
+                          <td>
+                            <div style="font-weight:700; color:var(--teal-900);">${b.venueCode}</div>
+                            <div style="font-size:0.74rem; color:var(--text-sec);">${b.venueName}</div>
+                          </td>
+                          <td>${b.dept.split("(")[0]}</td>
+                          <td>${b.date}</td>
+                          <td><span class="tag-badge">${b.timeSlot}</span></td>
+                          <td>
+                            <span class="status-pill status-pending" style="font-size:0.72rem;">
+                              ⏳ Pending Admin Approval
+                            </span>
+                          </td>
+                          <td>
+                            <button class="btn btn-danger btn-sm cancel-booking-btn" data-id="${b.id}" style="padding:0.25rem 0.6rem; font-size:0.75rem;">Cancel Request</button>
+                          </td>
+                        </tr>
+                      `
+                        )
+                        .join("")}
+                    </tbody>
+                  </table>
+                </div>`
+          }
+        </div>
+
+        <!-- SECTION 2: CONFIRMED & PAST BOOKINGS -->
+        <div>
+          <h3 style="font-size:0.96rem; font-weight:800; color:var(--teal-900); margin-bottom:0.4rem; display:flex; align-items:center; gap:0.4rem;">
+            <span>📋</span> Confirmed &amp; Past Bookings (${historyBookings.length})
+          </h3>
+          <p style="font-size:0.8rem; color:var(--text-sec); margin-bottom:0.75rem;">
+            Official records of accepted reservations, rejected requisitions, and cancelled bookings.
+          </p>
+
+          ${
+            historyBookings.length === 0
+              ? `<div style="background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; padding:1.25rem; text-align:center; color:#64748b; font-size:0.85rem;">
+                  No past booking records found.
+                 </div>`
+              : `<div class="table-wrapper">
+                  <table class="history-table">
+                    <thead>
+                      <tr>
+                        <th>Req ID</th>
+                        <th>Venue</th>
+                        <th>Department</th>
+                        <th>Date</th>
+                        <th>Slot</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${historyBookings
+                        .map((b) => {
+                          const isConf = b.status === "Confirmed" || b.status === "Approved";
+                          const isRej = b.status === "Rejected";
+                          const isCanc = b.status === "Cancelled";
+                          const statusClass = isConf ? "available" : isRej ? "rejected" : "booked";
+                          const statusLabel = isConf ? "✓ Confirmed" : isRej ? "✕ Rejected by Admin" : b.status;
+                          return `
+                          <tr>
+                            <td><strong>#${b.id}</strong></td>
+                            <td>
+                              <div style="font-weight:700; color:var(--teal-900);">${b.venueCode}</div>
+                              <div style="font-size:0.74rem; color:var(--text-sec);">${b.venueName}</div>
+                            </td>
+                            <td>${b.dept.split("(")[0]}</td>
+                            <td>${b.date}</td>
+                            <td><span class="tag-badge">${b.timeSlot}</span></td>
+                            <td>
+                              <span class="status-pill ${statusClass}" style="font-size:0.72rem;">
+                                ${statusLabel}
+                              </span>
+                            </td>
+                            <td>
+                              ${
+                                isConf
+                                  ? `<button class="btn btn-danger btn-sm cancel-booking-btn" data-id="${b.id}" style="padding:0.25rem 0.6rem; font-size:0.75rem;">Cancel</button>`
+                                  : `<span style="font-size:0.8rem; color:var(--text-muted);">&mdash;</span>`
+                              }
+                            </td>
+                          </tr>
+                        `;
+                        })
+                        .join("")}
+                    </tbody>
+                  </table>
+                </div>`
+          }
+        </div>
+      `;
+
+      // Attach cancel click handler
+      contentContainer.querySelectorAll(".cancel-booking-btn").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const bookingId = btn.getAttribute("data-id");
+          if (confirm(`Are you sure you want to cancel requisition #${bookingId}?`)) {
+            try {
+              await ApiService.cancelBooking(bookingId);
+              showToast(`Requisition #${bookingId} cancelled.`);
+              openPreviousBookingsModal();
+              if (typeof executeSearch === "function") executeSearch();
+            } catch (e) {
+              showToast("Failed to cancel requisition.", "error");
+            }
+          }
+        });
+      });
+    }
   } catch (e) {
-    DOM.historyTableBody.innerHTML = `
-      <tr><td colspan="7" style="text-align:center; color:#9b2c2c;">Error loading history.</td></tr>
-    `;
+    if (contentContainer) {
+      contentContainer.innerHTML = `
+        <div style="text-align:center; padding:2rem; color:#9b2c2c;">
+          <p>Error loading booking records: ${e.message}</p>
+        </div>
+      `;
+    }
   }
 }
 
 function closePreviousBookingsModal() {
-  DOM.prevBookingsModal.classList.remove("active");
+  const modal = DOM.prevBookingsModal || document.getElementById("prev-bookings-modal");
+  if (modal) modal.classList.remove("active");
 }
 
 // ============================================================================
@@ -1311,41 +1668,61 @@ function setupEventListeners() {
   DOM.navContactBtn.addEventListener("click", () => {
     DOM.navMenu.classList.remove("show-mobile");
   });
-console.log("loginBtn:", DOM.btnOpenAuth);
   // Login / Register button
-  DOM.btnOpenAuth.addEventListener("click", () => {
-  console.log("login clicked");
-  openAuthModal("signin");
-});
-  DOM.authModalClose.addEventListener("click", closeAuthModal);
+  if (DOM.btnOpenAuth) {
+    DOM.btnOpenAuth.addEventListener("click", (e) => {
+      e.preventDefault();
+      openAuthModal("signin");
+    });
+  }
+
+  if (DOM.authModalClose) {
+    DOM.authModalClose.addEventListener("click", closeAuthModal);
+  }
 
   // Auth tabs
-  DOM.tabSignin.addEventListener("click", () => {
-    clearAuthErrors();
-    switchAuthTab("signin");
-    setTimeout(() => DOM.signinEmail.focus(), 50);
-  });
-  DOM.tabRegister.addEventListener("click", () => {
-    clearAuthErrors();
-    switchAuthTab("register");
-    setTimeout(() => DOM.regName.focus(), 50);
-  });
+  if (DOM.tabSignin) {
+    DOM.tabSignin.addEventListener("click", (e) => {
+      e.preventDefault();
+      clearAuthErrors();
+      switchAuthTab("signin");
+      setTimeout(() => { if (DOM.signinEmail) DOM.signinEmail.focus(); }, 50);
+    });
+  }
 
-  DOM.gotoRegisterLink.addEventListener("click", (e) => {
-    e.preventDefault();
-    clearAuthErrors();
-    switchAuthTab("register");
-  });
-  DOM.gotoSigninLink.addEventListener("click", (e) => {
-    e.preventDefault();
-    clearAuthErrors();
-    switchAuthTab("signin");
-  });
+  if (DOM.tabRegister) {
+    DOM.tabRegister.addEventListener("click", (e) => {
+      e.preventDefault();
+      clearAuthErrors();
+      switchAuthTab("register");
+      setTimeout(() => { if (DOM.regName) DOM.regName.focus(); }, 50);
+    });
+  }
 
-  DOM.forgotPasswordLink.addEventListener("click", (e) => {
-    e.preventDefault();
-    showToast("Please contact the Central Administration at venues.admin@college.ac.in to reset password.", "success");
-  });
+  if (DOM.gotoRegisterLink) {
+    DOM.gotoRegisterLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      clearAuthErrors();
+      switchAuthTab("register");
+      setTimeout(() => { if (DOM.regName) DOM.regName.focus(); }, 50);
+    });
+  }
+
+  if (DOM.gotoSigninLink) {
+    DOM.gotoSigninLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      clearAuthErrors();
+      switchAuthTab("signin");
+      setTimeout(() => { if (DOM.signinEmail) DOM.signinEmail.focus(); }, 50);
+    });
+  }
+
+  if (DOM.forgotPasswordLink) {
+    DOM.forgotPasswordLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      showToast("Please contact the Central Administration at venues.admin@college.ac.in to reset password.", "success");
+    });
+  }
 
   // Demo quick-fill buttons (inside sign-in panel)
   document.addEventListener("click", (e) => {
@@ -1355,56 +1732,104 @@ console.log("loginBtn:", DOM.btnOpenAuth);
     if (!email) return;
     if (DOM.signinEmail) DOM.signinEmail.value = email;
     if (DOM.signinPassword) DOM.signinPassword.value = "password123";
-    const friendlyName = btn.textContent.trim().replace(/^👤\s*/, "");
+    const friendlyName = btn.textContent.trim().replace(/^[^a-zA-Z0-9]+\s*/, "");
     showToast(`Demo credentials filled — ${friendlyName}`, "success");
     clearAuthErrors();
   });
 
-  // My Bookings
-  DOM.navPrevBookingsBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    DOM.navMenu.classList.remove("show-mobile");
-    openPreviousBookingsModal();
+  // Global delegated click listener for resilient button/tab behaviors
+  document.addEventListener("click", (e) => {
+    // Header Login/Register button
+    if (e.target.closest("#btn-open-auth")) {
+      e.preventDefault();
+      openAuthModal("signin");
+      return;
+    }
+    // Auth Modal close
+    if (e.target.closest("#auth-modal-close")) {
+      e.preventDefault();
+      closeAuthModal();
+      return;
+    }
+    // Tab signin or link
+    if (e.target.closest("#tab-signin") || e.target.closest("#goto-signin-link")) {
+      e.preventDefault();
+      clearAuthErrors();
+      switchAuthTab("signin");
+      setTimeout(() => {
+        const el = DOM.signinEmail || document.getElementById("signin-email");
+        if (el) el.focus();
+      }, 50);
+      return;
+    }
+    // Tab register or link
+    if (e.target.closest("#tab-register") || e.target.closest("#goto-register-link")) {
+      e.preventDefault();
+      clearAuthErrors();
+      switchAuthTab("register");
+      setTimeout(() => {
+        const el = DOM.regName || document.getElementById("reg-name");
+        if (el) el.focus();
+      }, 50);
+      return;
+    }
   });
+
+  // My Bookings
+  if (DOM.navPrevBookingsBtn) {
+    DOM.navPrevBookingsBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (DOM.navMenu) DOM.navMenu.classList.remove("show-mobile");
+      openPreviousBookingsModal();
+    });
+  }
 
   // Logout
-  DOM.navLogoutBtn.addEventListener("click", () => {
-    ApiService.logout();
-    AppState.currentUser = null;
-    updateNavAuthUI();
-    showToast("You have been signed out.");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    DOM.navMenu.classList.remove("show-mobile");
-  });
+  if (DOM.navLogoutBtn) {
+    DOM.navLogoutBtn.addEventListener("click", () => {
+      ApiService.logout();
+      AppState.currentUser = null;
+      updateNavAuthUI();
+      showToast("You have been signed out.");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (DOM.navMenu) DOM.navMenu.classList.remove("show-mobile");
+    });
+  }
 
   // Department Modal Closures
-  DOM.closeDeptModalBtn.addEventListener("click", closeDepartmentDetailsModal);
-  DOM.btnCloseDeptModal.addEventListener("click", closeDepartmentDetailsModal);
+  if (DOM.closeDeptModalBtn) DOM.closeDeptModalBtn.addEventListener("click", closeDepartmentDetailsModal);
+  if (DOM.btnCloseDeptModal) DOM.btnCloseDeptModal.addEventListener("click", closeDepartmentDetailsModal);
 
   // Venue Details Modal Closures
-  DOM.closeVenueModalBtn.addEventListener("click", closeVenueDetailModal);
-  DOM.btnCancelVenueDetail.addEventListener("click", closeVenueDetailModal);
+  if (DOM.closeVenueModalBtn) DOM.closeVenueModalBtn.addEventListener("click", closeVenueDetailModal);
+  if (DOM.btnCancelVenueDetail) DOM.btnCancelVenueDetail.addEventListener("click", closeVenueDetailModal);
 
   // Email Composer Modal Closures
-  DOM.closeEmailModalBtn.addEventListener("click", closeEmailComposerModal);
-  DOM.btnBackFromEmail.addEventListener("click", () => {
-    closeEmailComposerModal();
-    if (AppState.selectedVenue) openVenueDetailModal(AppState.selectedVenue.id);
-  });
+  if (DOM.closeEmailModalBtn) DOM.closeEmailModalBtn.addEventListener("click", closeEmailComposerModal);
+  if (DOM.btnBackFromEmail) {
+    DOM.btnBackFromEmail.addEventListener("click", () => {
+      closeEmailComposerModal();
+      if (AppState.selectedVenue) openVenueDetailModal(AppState.selectedVenue.id);
+    });
+  }
 
   // Success Modal
-  DOM.btnSuccessViewBookings.addEventListener("click", () => {
-    DOM.bookingSuccessModal.classList.remove("active");
-    openPreviousBookingsModal();
-  });
-  DOM.btnSuccessBookMore.addEventListener("click", () => {
-    DOM.bookingSuccessModal.classList.remove("active");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
+  if (DOM.btnSuccessViewBookings) {
+    DOM.btnSuccessViewBookings.addEventListener("click", () => {
+      if (DOM.bookingSuccessModal) DOM.bookingSuccessModal.classList.remove("active");
+      openPreviousBookingsModal();
+    });
+  }
+  if (DOM.btnSuccessBookMore) {
+    DOM.btnSuccessBookMore.addEventListener("click", () => {
+      if (DOM.bookingSuccessModal) DOM.bookingSuccessModal.classList.remove("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
 
   // History Modal Closures
-  DOM.closeHistoryModalBtn.addEventListener("click", closePreviousBookingsModal);
-  DOM.btnCloseHistory.addEventListener("click", closePreviousBookingsModal);
+  if (DOM.closeHistoryModalBtn) DOM.closeHistoryModalBtn.addEventListener("click", closePreviousBookingsModal);
+  if (DOM.btnCloseHistory) DOM.btnCloseHistory.addEventListener("click", closePreviousBookingsModal);
 
   // Backdrop overlay click
   document.querySelectorAll(".modal-overlay").forEach((overlay) => {
@@ -1419,7 +1844,7 @@ console.log("loginBtn:", DOM.btnOpenAuth);
 // ============================================================================
 // INITIALIZATION ON READY
 // ============================================================================
-document.addEventListener("DOMContentLoaded", () => {
+function initApp() {
   initDatePicker();
   setupEventListeners();
   updateNavAuthUI();
@@ -1433,4 +1858,10 @@ document.addEventListener("DOMContentLoaded", () => {
   if (ApiService.isAuthenticated()) {
     showToast(`Welcome back, ${AppState.currentUser.name}!`);
   }
-});
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initApp);
+} else {
+  initApp();
+}
