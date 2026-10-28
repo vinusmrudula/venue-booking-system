@@ -766,7 +766,7 @@ function renderDepartmentsDirectory(filterQuery = "") {
     return (
       dept.name.toLowerCase().includes(q) ||
       dept.tagline.toLowerCase().includes(q) ||
-      dept.description.toLowerCase().includes(q) ||
+      //dept.description.toLowerCase().includes(q) ||
       dept.roomsList.some((r) => r.toLowerCase().includes(q))
     );
   });
