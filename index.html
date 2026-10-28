@@ -17,8 +17,11 @@
   ================================-->
   <div class="utility-bar">
     <div class="util-left">
-      <span>🏛️ College Venue &amp; Facility Booking System</span>
+      <span>🏛️ College Venue &amp; Facility Booking Platform</span>
       <span class="util-badge">Official Portal</span>
+    </div>
+    <div class="util-right">
+      <span id="util-datetime">Loading...</span>
     </div>
   </div>
 
@@ -108,7 +111,7 @@
 
         <!-- Min Capacity -->
         <div class="field-group">
-          <label class="field-label" for="filter-capacity">Minimum Capacity</label>
+          <label class="field-label" for="filter-capacity">Capacity of Class</label>
           <select id="filter-capacity" class="field-input">
             <option value="0">Any Capacity</option>
             <option value="40">40+ Students</option>
@@ -635,7 +638,7 @@
 
         <form id="signin-form" novalidate>
           <div class="field-group">
-            <label class="field-label" for="signin-email">College Email <span class="req-star">*</span></label>
+            <label class="field-label" for="signin-email">College Email (.ac.in) <span class="req-star">*</span></label>
             <input type="email" id="signin-email" class="field-input" placeholder="yourname@college.ac.in" autocomplete="email" />
             <span class="field-error" id="signin-email-error"></span>
           </div>
@@ -667,9 +670,9 @@
         </p>
       </div>
 
-      <!-- ---- REGISTER PANEL ---- -->
+      <!-- ---- CREATE ACCOUNT PANEL (Uses OTP Authentication) ---- -->
       <div class="auth-panel" id="panel-register">
-        <p class="auth-panel-title">Create Official Account &bull; OTP Verified</p>
+        <p class="auth-panel-title">Create Official Account &bull; OTP Authentication</p>
 
         <div class="banner-error" id="register-banner-error">
           <span id="register-banner-error-text"></span>
@@ -682,7 +685,7 @@
             <span class="field-error" id="reg-name-error"></span>
           </div>
           <div class="field-group">
-            <label class="field-label" for="reg-email">College Email <span class="req-star">*</span></label>
+            <label class="field-label" for="reg-email">College Email (.ac.in) <span class="req-star">*</span></label>
             <input type="email" id="reg-email" class="field-input" placeholder="yourname@college.ac.in" autocomplete="email" />
             <span class="field-error" id="reg-email-error"></span>
           </div>
@@ -739,7 +742,7 @@
     <div class="auth-modal-card otp-card">
       <div class="otp-icon">📧</div>
       <h2 class="otp-heading">Verify College Email</h2>
-      <p class="otp-sub">We sent a 4-digit code to</p>
+      <p class="otp-sub">We sent a 4-digit authentication code to</p>
       <p class="otp-email-display" id="otp-display-email">your@college.ac.in</p>
 
       <div class="banner-error" id="otp-banner-error">

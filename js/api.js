@@ -13,7 +13,11 @@
 
 const ApiConfig = {
   USE_MOCK: true,
-  BASE_URL: window.location.origin + "/api",
+//  BASE_URL: window.location.origin + "/api", 
+  /*
+  check here which to take , on backend 
+  */
+  BASE_URL: "http://localhost:5000/api",
   MOCK_DELAY_MS: 200,
   STORAGE_KEYS: {
     USERS: "bookit_users_db_v3",

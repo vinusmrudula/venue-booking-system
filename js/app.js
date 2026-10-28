@@ -124,7 +124,7 @@ const DOM = {
   gotoRegisterLink:       document.getElementById("goto-register-link"),
   forgotPasswordLink:     document.getElementById("forgot-password-link"),
 
-  // Register Form
+  // Register Form (Create Account)
   registerForm:           document.getElementById("register-form"),
   regName:                document.getElementById("reg-name"),
   regEmail:               document.getElementById("reg-email"),
@@ -141,7 +141,7 @@ const DOM = {
   registerSubmitBtn:      document.getElementById("register-submit-btn"),
   gotoSigninLink:         document.getElementById("goto-signin-link"),
 
-  // OTP Modal
+  // OTP Verification Modal
   otpModal:               document.getElementById("otp-modal"),
   otpForm:                document.getElementById("otp-form"),
   otp1:                   document.getElementById("otp-1"),
@@ -221,6 +221,7 @@ const DOM = {
 // Notification Utility (Toasts)
 // ============================================================================
 function showToast(message, type = "success") {
+  if (!DOM.toastContainer) return;
   const toast = document.createElement("div");
   toast.className = `toast toast-${type}`;
   toast.innerHTML = `
@@ -265,13 +266,13 @@ function isValidCollegeEmail(email) {
 }
 
 function setFieldError(inputEl, errorEl, message = "") {
-  inputEl.classList.add("is-invalid");
+  if (inputEl) inputEl.classList.add("is-invalid");
   if (message && errorEl) errorEl.textContent = message;
   if (errorEl) errorEl.classList.add("show");
 }
 
 function clearFieldError(inputEl, errorEl) {
-  inputEl.classList.remove("is-invalid");
+  if (inputEl) inputEl.classList.remove("is-invalid");
   if (errorEl) errorEl.classList.remove("show");
 }
 
@@ -295,17 +296,17 @@ function updateNavAuthUI() {
   AppState.currentUser = user;
 
   if (user) {
-    DOM.navPrevBookingsBtn.style.display = "inline-block";
-    DOM.navUserBadge.style.display = "inline-flex";
-    DOM.navUserName.textContent = user.name;
-    DOM.userAvatarChar.textContent = user.name.charAt(0).toUpperCase();
-    DOM.navLogoutBtn.style.display = "inline-block";
-    DOM.btnOpenAuth.style.display = "none";
+    if (DOM.navPrevBookingsBtn) DOM.navPrevBookingsBtn.style.display = "inline-block";
+    if (DOM.navUserBadge) DOM.navUserBadge.style.display = "inline-flex";
+    if (DOM.navUserName) DOM.navUserName.textContent = user.name;
+    if (DOM.userAvatarChar) DOM.userAvatarChar.textContent = user.name.charAt(0).toUpperCase();
+    if (DOM.navLogoutBtn) DOM.navLogoutBtn.style.display = "inline-block";
+    if (DOM.btnOpenAuth) DOM.btnOpenAuth.style.display = "none";
   } else {
-    DOM.navPrevBookingsBtn.style.display = "none";
-    DOM.navUserBadge.style.display = "none";
-    DOM.navLogoutBtn.style.display = "none";
-    DOM.btnOpenAuth.style.display = "inline-block";
+    if (DOM.navPrevBookingsBtn) DOM.navPrevBookingsBtn.style.display = "none";
+    if (DOM.navUserBadge) DOM.navUserBadge.style.display = "none";
+    if (DOM.navLogoutBtn) DOM.navLogoutBtn.style.display = "none";
+    if (DOM.btnOpenAuth) DOM.btnOpenAuth.style.display = "inline-block";
   }
 }
 
@@ -355,15 +356,18 @@ function switchAuthTab(tab) {
 }
 
 function openOtpModal() {
-  DOM.authModal.classList.remove("active");
-  DOM.otpModal.classList.add("active");
+   if (DOM.authModal) DOM.authModal.classList.remove("active");
+  if (DOM.otpModal) DOM.otpModal.classList.add("active");
   [DOM.otp1, DOM.otp2, DOM.otp3, DOM.otp4].forEach((inp) => {
-    inp.value = "";
-    inp.classList.remove("is-invalid");
+    if (inp) {
+      inp.value = "";
+      inp.classList.remove("is-invalid");
+    }
   });
-  DOM.otpBannerError.classList.remove("show");
+  if (DOM.otpBannerError) DOM.otpBannerError.classList.remove("show");
   startOtpCountdown(30);
-  setTimeout(() => DOM.otp1.focus(), 60);
+  setTimeout(() => { if (DOM.otp1) DOM.otp1.focus(); }, 80);
+}
 }
 
 function closeOtpModal() {
@@ -374,19 +378,25 @@ function startOtpCountdown(seconds = 30) {
   if (AppState.otpTimerInterval) clearInterval(AppState.otpTimerInterval);
   AppState.otpTimerSeconds = seconds;
 
-  DOM.btnResendOtp.disabled = true;
-  DOM.btnResendOtp.style.opacity = "0.45";
-  DOM.otpTimerText.textContent = `(Resend in ${seconds}s)`;
+  if (DOM.btnResendOtp) {
+    DOM.btnResendOtp.disabled = true;
+    DOM.btnResendOtp.style.opacity = "0.45";
+  }
+  if (DOM.otpTimerText) {
+    DOM.otpTimerText.textContent = `(Resend in ${seconds}s)`;
+  }
 
   AppState.otpTimerInterval = setInterval(() => {
     AppState.otpTimerSeconds--;
     if (AppState.otpTimerSeconds <= 0) {
       clearInterval(AppState.otpTimerInterval);
-      DOM.btnResendOtp.disabled = false;
-      DOM.btnResendOtp.style.opacity = "1";
-      DOM.otpTimerText.textContent = "";
+      if (DOM.btnResendOtp) {
+        DOM.btnResendOtp.disabled = false;
+        DOM.btnResendOtp.style.opacity = "1";
+      }
+      if (DOM.otpTimerText) DOM.otpTimerText.textContent = "";
     } else {
-      DOM.otpTimerText.textContent = `(Resend in ${AppState.otpTimerSeconds}s)`;
+      if (DOM.otpTimerText) DOM.otpTimerText.textContent = `(Resend in ${AppState.otpTimerSeconds}s)`;
     }
   }, 1000);
 }
@@ -1755,29 +1765,23 @@ DOM.otpBackBtn.addEventListener("click", () => {
 // ============================================================================
 function setupEventListeners() {
   // Brand logo
-  DOM.brandHomeBtn.addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
+  if (DOM.brandHomeBtn) {
+    DOM.brandHomeBtn.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
 
   // Mobile menu
-  DOM.mobileToggleBtn.addEventListener("click", () => {
-    DOM.navMenu.classList.toggle("show-mobile");
-  });
+  if (DOM.mobileToggleBtn) {
+    DOM.mobileToggleBtn.addEventListener("click", () => {
+      DOM.navMenu.classList.toggle("show-mobile");
+    });
+  }
 
   // Header Nav links
-  // DOM.navSearchBtn.addEventListener("click", () => {
-  //   DOM.navMenu.classList.remove("show-mobile");
-  // });
-  // DOM.navDeptBtn.addEventListener("click", () => {
-  //   DOM.navMenu.classList.remove("show-mobile");
-  // });
-  DOM.navAboutBtn.addEventListener("click", () => {
-    DOM.navMenu.classList.remove("show-mobile");
-  });
-  DOM.navContactBtn.addEventListener("click", () => {
-    DOM.navMenu.classList.remove("show-mobile");
-  });
-  // Login / Register button
+  if (DOM.navContactBtn) DOM.navContactBtn.addEventListener("click", () => DOM.navMenu.classList.remove("show-mobile"));
+
+  // Single Header Auth Button: "Sign In / Create Account"
   if (DOM.btnOpenAuth) {
     DOM.btnOpenAuth.addEventListener("click", (e) => {
       e.preventDefault();

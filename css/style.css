@@ -1,5 +1,5 @@
 /* ==========================================================================
-   BookIt — College Venue Booking System
+   BookIt — College Venue Booking Platform
    Color Scheme: Dark Teal (#0c4340) + Soft Mint (#ebf5f2) + Orange (#e8620a)
    Font: Plus Jakarta Sans
    ========================================================================== */
@@ -179,15 +179,17 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   color: #fff;
 }
 
+/* SINGLE AUTH BUTTON in header as requested */
 .btn-login-register {
   background: var(--orange);
   color: #fff;
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-weight: 700;
-  padding: 0.5rem 1.15rem;
+  padding: 0.55rem 1.25rem;
   border-radius: 6px;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   transition: background 0.2s, transform 0.15s;
+  box-shadow: 0 2px 8px rgba(232,98,10,0.25);
 }
 .btn-login-register:hover {
   background: var(--orange-dk);
@@ -1259,9 +1261,8 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 
 .contact-grid {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
+  grid-template-columns: 1.1fr 1fr;
   gap: 2.5rem;
-  margin-top: 2.5rem;
 }
 
 .contact-info-card, .contact-form-card {
@@ -1303,7 +1304,19 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .contact-detail-row p {
   font-size: 0.83rem;
   color: var(--text-sec);
-  line-height: 1.45;
+  line-height: 1.5;
+}
+
+.address-highlight {
+  font-size: 0.88rem !important;
+  line-height: 1.6 !important;
+  color: var(--teal-950) !important;
+  background: var(--mint-bg);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--mint-border);
+  margin-top: 0.35rem;
+  font-weight: 600;
 }
 
 .contact-alert-box {
@@ -1633,13 +1646,13 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   margin-top: -0.2rem;
 }
 .link-small { font-size: 0.78rem; color: var(--teal-600); }
+.link-teal { color: var(--teal-700); font-weight: 600; }
 .auth-switch-text {
   text-align: center;
   font-size: 0.83rem;
   color: var(--text-muted);
   margin-top: 1rem;
 }
-.link-teal { color: var(--teal-700); font-weight: 600; }
 
 /* OTP Modal */
 .otp-card { text-align: center; max-width: 380px; }
