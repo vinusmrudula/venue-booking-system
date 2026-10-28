@@ -13,6 +13,10 @@
 
 const ApiConfig = {
   USE_MOCK: true,
+//  BASE_URL: window.location.origin + "/api", 
+  /*
+  check here which to take , on backend 
+  */
   BASE_URL: "http://localhost:5000/api",
   MOCK_DELAY_MS: 200,
   STORAGE_KEYS: {
@@ -31,34 +35,78 @@ function initializeDatabase() {
   // Always ensure venues database has the latest college departments
   localStorage.setItem(ApiConfig.STORAGE_KEYS.VENUES, JSON.stringify(INITIAL_VENUES));
 
-  // Bookings Database
-  if (!localStorage.getItem(ApiConfig.STORAGE_KEYS.BOOKINGS)) {
+  // Bookings Database - seed sample bookings if empty or missing pending samples
+  const storedBookings = JSON.parse(localStorage.getItem(ApiConfig.STORAGE_KEYS.BOOKINGS) || "[]");
+  if (!storedBookings || storedBookings.length === 0) {
     localStorage.setItem(ApiConfig.STORAGE_KEYS.BOOKINGS, JSON.stringify(INITIAL_BOOKINGS));
+  } else {
+    // Ensure all demo bookings from INITIAL_BOOKINGS exist for testing approval workflows
+    let updated = false;
+    INITIAL_BOOKINGS.forEach((ib) => {
+      if (!storedBookings.some((sb) => sb.id === ib.id)) {
+        storedBookings.push(ib);
+        updated = true;
+      }
+    });
+    if (updated) {
+      localStorage.setItem(ApiConfig.STORAGE_KEYS.BOOKINGS, JSON.stringify(storedBookings));
+    }
   }
 
   // Default demo users with official .ac.in college emails
-  if (!localStorage.getItem(ApiConfig.STORAGE_KEYS.USERS)) {
-    const demoUsers = [
-      {
-        id: "usr-1",
-        name: "Aman Sharma",
-        email: "aman.student@college.ac.in",
-        role: "student",
-        dept: "Department of Computer Science and Engineering (new)",
-        password: "password123",
-        createdAt: new Date().toISOString()
-      },
-      {
-        id: "usr-2",
-        name: "Dr. Sunita Sen",
-        email: "sunita.faculty@college.ac.in",
-        role: "faculty",
-        dept: "Department of Electrical Engineering",
-        password: "password123",
-        createdAt: new Date().toISOString()
+  const defaultDemoUsers = [
+    {
+      id: "usr-1",
+      name: "Aman Sharma",
+      email: "aman.student@college.ac.in",
+      role: "student",
+      dept: "Department of Computer Science and Engineering (new)",
+      password: "password123",
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "usr-2",
+      name: "Dr. Sunita Sen",
+      email: "sunita.faculty@college.ac.in",
+      role: "faculty",
+      dept: "Department of Electrical Engineering",
+      password: "password123",
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "usr-3",
+      name: "Purva Patel",
+      email: "purva.patel@college.ac.in",
+      role: "student",
+      dept: "Department of Computer Science and Engineering (new)",
+      password: "password123",
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "usr-4",
+      name: "Prof. Rajesh Verma",
+      email: "admin.cse@college.ac.in",
+      role: "admin",
+      dept: "Department of Computer Science and Engineering (new)",
+      password: "password123",
+      createdAt: new Date().toISOString()
+    }
+  ];
+
+  const storedUsers = JSON.parse(localStorage.getItem(ApiConfig.STORAGE_KEYS.USERS) || "[]");
+  if (!storedUsers || storedUsers.length === 0) {
+    localStorage.setItem(ApiConfig.STORAGE_KEYS.USERS, JSON.stringify(defaultDemoUsers));
+  } else {
+    let usersUpdated = false;
+    defaultDemoUsers.forEach((du) => {
+      if (!storedUsers.some((su) => su.email.toLowerCase() === du.email.toLowerCase())) {
+        storedUsers.push(du);
+        usersUpdated = true;
       }
-    ];
-    localStorage.setItem(ApiConfig.STORAGE_KEYS.USERS, JSON.stringify(demoUsers));
+    });
+    if (usersUpdated) {
+      localStorage.setItem(ApiConfig.STORAGE_KEYS.USERS, JSON.stringify(storedUsers));
+    }
   }
 }
 
@@ -267,8 +315,8 @@ const ApiService = {
 
     const targetDate = filters.date || getTodayDateString();
 
-    // Active bookings on this date
-    const activeBookings = bookings.filter((b) => b.date === targetDate && b.status !== "Cancelled");
+    // Active bookings on this date (exclude Cancelled and Rejected)
+    const activeBookings = bookings.filter((b) => b.date === targetDate && b.status !== "Cancelled" && b.status !== "Rejected");
 
     // Filter venues
     let results = venues.filter((v) => {
@@ -378,7 +426,7 @@ const ApiService = {
     const clash = bookings.some((b) => {
       if (b.venueId !== bookingPayload.venueId) return false;
       if (b.date !== bookingPayload.date) return false;
-      if (b.status === "Cancelled") return false;
+      if (b.status === "Cancelled" || b.status === "Rejected") return false;
 
       // Check slot collision
       if (b.timeSlot.includes("Full Day") || targetSlot.includes("Full Day")) return true;
@@ -402,8 +450,11 @@ const ApiService = {
       purpose: bookingPayload.purpose || "Academic / College Event",
       bookedBy: bookingPayload.bookedBy,
       applicantEmail: bookingPayload.applicantEmail,
+      applicantRole: bookingPayload.applicantRole || "student",
       inchargeEmail: bookingPayload.inchargeEmail,
-      status: "Confirmed",
+      status: "Pending Approval",
+      decisionBy: null,
+      decisionDate: null,
       timestamp: new Date().toISOString()
     };
 
@@ -411,6 +462,11 @@ const ApiService = {
     localStorage.setItem(ApiConfig.STORAGE_KEYS.BOOKINGS, JSON.stringify(bookings));
 
     return newBooking;
+  },
+
+  async getAllBookings() {
+    await delay(60);
+    return JSON.parse(localStorage.getItem(ApiConfig.STORAGE_KEYS.BOOKINGS) || "[]");
   },
 
   async getUserBookings(userEmail) {
@@ -421,6 +477,52 @@ const ApiService = {
     return bookings.filter(
       (b) => b.applicantEmail && b.applicantEmail.toLowerCase() === userEmail.toLowerCase()
     );
+  },
+
+  async approveBooking(bookingId, adminName = "Department Admin", reason = "", adminEmail = "", emailSubject = "", emailBody = "") {
+    await delay(120);
+    const bookings = JSON.parse(localStorage.getItem(ApiConfig.STORAGE_KEYS.BOOKINGS) || "[]");
+    const index = bookings.findIndex((b) => b.id === bookingId);
+    if (index === -1) throw new Error("Booking record not found");
+
+    bookings[index].status = "Confirmed";
+    bookings[index].decisionBy = adminName;
+    bookings[index].decisionEmail = adminEmail;
+    bookings[index].decisionReason = reason;
+    bookings[index].decisionDate = new Date().toISOString();
+    bookings[index].emailNotification = {
+      type: "confirmation",
+      from: adminEmail,
+      to: bookings[index].applicantEmail,
+      subject: emailSubject,
+      body: emailBody,
+      sentAt: new Date().toISOString()
+    };
+    localStorage.setItem(ApiConfig.STORAGE_KEYS.BOOKINGS, JSON.stringify(bookings));
+    return bookings[index];
+  },
+
+  async rejectBooking(bookingId, adminName = "Department Admin", reason = "", adminEmail = "", emailSubject = "", emailBody = "") {
+    await delay(120);
+    const bookings = JSON.parse(localStorage.getItem(ApiConfig.STORAGE_KEYS.BOOKINGS) || "[]");
+    const index = bookings.findIndex((b) => b.id === bookingId);
+    if (index === -1) throw new Error("Booking record not found");
+
+    bookings[index].status = "Rejected";
+    bookings[index].decisionBy = adminName;
+    bookings[index].decisionEmail = adminEmail;
+    bookings[index].decisionReason = reason;
+    bookings[index].decisionDate = new Date().toISOString();
+    bookings[index].emailNotification = {
+      type: "rejection",
+      from: adminEmail,
+      to: bookings[index].applicantEmail,
+      subject: emailSubject,
+      body: emailBody,
+      sentAt: new Date().toISOString()
+    };
+    localStorage.setItem(ApiConfig.STORAGE_KEYS.BOOKINGS, JSON.stringify(bookings));
+    return bookings[index];
   },
 
   async cancelBooking(bookingId) {
