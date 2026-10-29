@@ -17,12 +17,10 @@
   ================================-->
   <div class="utility-bar">
     <div class="util-left">
-      <span>🏛️ College Venue &amp; Facility Booking Platform</span>
+      <span>🏛️ College Venue &amp; Facility Booking System</span>
       <span class="util-badge">Official Portal</span>
     </div>
-    <div class="util-right">
-      <span id="util-datetime">Loading...</span>
-    </div>
+    <div class="util-right" id="util-datetime" style="font-weight:600; color:#c8edeb; display:flex; align-items:center; gap:0.5rem;"></div>
   </div>
 
   <!-- ==============================
@@ -111,15 +109,15 @@
 
         <!-- Min Capacity -->
         <div class="field-group">
-          <label class="field-label" for="filter-capacity">Capacity of Class</label>
+          <label class="field-label" for="filter-capacity">Minimum Capacity</label>
           <select id="filter-capacity" class="field-input">
             <option value="0">Any Capacity</option>
-            <option value="40">40+ Students</option>
-            <option value="60">60+ Students</option>
-            <option value="80">80+ Students</option>
-            <option value="100">100+ Students</option>
-            <option value="150">150+ Students</option>
-            <option value="250">250+ Students (Auditorium)</option>
+            <option value="40">40+ Students (20+ Benches)</option>
+            <option value="60">60+ Students (30+ Benches)</option>
+            <option value="80">80+ Students (40+ Benches)</option>
+            <option value="100">100+ Students (50+ Benches)</option>
+            <option value="150">150+ Students (75+ Benches)</option>
+            <option value="250">250+ Students (Auditorium / 125+ Benches)</option>
           </select>
         </div>
 
@@ -132,8 +130,8 @@
     <!-- RIGHT: Hero text and CTA -->
     <div class="hero-text-block">
       <div class="hero-tag-badge">Official Campus Portal</div>
-      <h1 class="hero-title">Plan. Book.<br/>Experience.</h1>
-      <p class="hero-subtitle">Simplify booking classrooms, seminar halls, high-tech labs &amp; auditoriums — with real-time time-slot availability.</p>
+      <h6 class="hero-title">Your Space, Just a Click Away.</h6>
+      <p class="hero-subtitle">Simple • Smart • Seamless <br> Simplify booking classrooms, seminar halls, high-tech labs &amp; auditoriums — with real-time time-slot availability.</p>
 
       <div class="hero-actions">
         <a href="#section-departments" class="btn-hero-secondary">
@@ -306,14 +304,7 @@
           Browse complete infrastructure details of all 13 college departments, classroom capacities, digital projection equipment, smart boards, and laboratory facilities.
         </p>
 
-        <!-- Prominent Toggle / Action Button -->
-        <div class="dept-action-bar">
-          <button class="btn-view-all-depts" id="btn-toggle-depts">
-            <span class="btn-icon">🏛️</span>
-            <span id="btn-toggle-depts-text">Information of Depts (13 Departments)</span>
-            <span class="btn-arrow">&darr;</span>
-          </button>
-        </div>
+
       </div>
 
       <!-- Quick Search / Filter Bar for Departments -->
@@ -328,7 +319,7 @@
       </div>
 
       <!-- Department Cards Grid -->
-      <div class="departments-grid" id="departments-cards-grid">
+      <div class="departments-grid dept-small-boxes-grid" id="departments-cards-grid">
         <!-- Rendered dynamically by app.js -->
       </div>
 
@@ -405,7 +396,7 @@
   <!-- =========================================================================
        CONTACT US SECTION
   ========================================================================== -->
-  <section class="section-contact" id="section-contact">
+  <!-- <section class="section-contact" id="section-contact">
     <div class="section-inner">
       
       <div class="section-header-center">
@@ -416,7 +407,6 @@
 
       <div class="contact-grid">
         
-        <!-- Contact Info Card -->
         <div class="contact-info-card">
           <h3 class="contact-card-title">Central Venue Administration</h3>
           <p class="contact-card-desc">Office of the Dean of Student Affairs &amp; Estate Management</p>
@@ -458,7 +448,7 @@
           </div>
         </div>
 
-        <!-- Contact Message Form -->
+       
         <div class="contact-form-card">
           <h3 class="contact-card-title">Send Inquiry / Feedback</h3>
           <p class="contact-card-desc">Fill out the form below to reach the facility coordinators.</p>
@@ -500,7 +490,7 @@
       </div>
 
     </div>
-  </section>
+  </section> -->
 
   <!-- ==============================
        FOOTER
@@ -638,7 +628,7 @@
 
         <form id="signin-form" novalidate>
           <div class="field-group">
-            <label class="field-label" for="signin-email">College Email (.ac.in) <span class="req-star">*</span></label>
+            <label class="field-label" for="signin-email">College Email <span class="req-star">*</span></label>
             <input type="email" id="signin-email" class="field-input" placeholder="yourname@college.ac.in" autocomplete="email" />
             <span class="field-error" id="signin-email-error"></span>
           </div>
@@ -670,9 +660,9 @@
         </p>
       </div>
 
-      <!-- ---- CREATE ACCOUNT PANEL (Uses OTP Authentication) ---- -->
+      <!-- ---- REGISTER PANEL ---- -->
       <div class="auth-panel" id="panel-register">
-        <p class="auth-panel-title">Create Official Account &bull; OTP Authentication</p>
+        <p class="auth-panel-title">Create Official Account &bull; OTP Verified</p>
 
         <div class="banner-error" id="register-banner-error">
           <span id="register-banner-error-text"></span>
@@ -685,7 +675,7 @@
             <span class="field-error" id="reg-name-error"></span>
           </div>
           <div class="field-group">
-            <label class="field-label" for="reg-email">College Email (.ac.in) <span class="req-star">*</span></label>
+            <label class="field-label" for="reg-email">College Email <span class="req-star">*</span></label>
             <input type="email" id="reg-email" class="field-input" placeholder="yourname@college.ac.in" autocomplete="email" />
             <span class="field-error" id="reg-email-error"></span>
           </div>
@@ -695,8 +685,11 @@
               <option value="">— Select your role —</option>
               <option value="student">Student Organizer</option>
               <option value="faculty">Faculty Member</option>
-              <option value="admin">Department Staff / Admin</option>
+              <option value="admin">Department Staff / Admin (Requires Super-Admin Approval)</option>
             </select>
+            <div id="admin-role-hint" style="display:none; font-size:0.75rem; color:#b45309; background:#fef3c7; border:1px solid #fcd34d; padding:0.4rem 0.6rem; border-radius:4px; margin-top:0.35rem;">
+              🛡️ <strong>Note:</strong> Admin profiles require verification from designated supervisors (vinaynm25.aiml, vazeba25.comp, or vhankalasph25.comp) before activation.
+            </div>
             <span class="field-error" id="reg-role-error"></span>
           </div>
           <div class="field-group">
@@ -742,7 +735,7 @@
     <div class="auth-modal-card otp-card">
       <div class="otp-icon">📧</div>
       <h2 class="otp-heading">Verify College Email</h2>
-      <p class="otp-sub">We sent a 4-digit authentication code to</p>
+      <p class="otp-sub">We sent a 4-digit code to</p>
       <p class="otp-email-display" id="otp-display-email">your@college.ac.in</p>
 
       <div class="banner-error" id="otp-banner-error">
@@ -814,31 +807,70 @@
   </div>
 
   <!-- ==============================
-       EMAIL COMPOSER MODAL
+       BOOKING REQUISITION MODAL (SENT TO ADMIN ACCOUNT)
   ================================-->
   <div class="modal-overlay" id="email-composer-modal">
     <div class="details-modal-card">
       <button class="modal-close-btn" id="close-email-modal-btn">✕</button>
-      <h2 class="details-title">📧 Facility Requisition Dispatch</h2>
+      <h2 class="details-title">📋 Submit Booking Request to Admin</h2>
+      <p style="font-size:0.83rem; color:var(--text-sec); margin-top:-0.5rem; margin-bottom:1.25rem;">
+        Your reservation request will be directly sent to the Department Admin account for review and approval.
+      </p>
 
-      <div class="email-field-row">
-        <label class="spec-label" for="mail-to">To (Incharge):</label>
-        <input type="text" id="mail-to" class="field-input email-readonly" readonly />
-      </div>
-      <div class="email-field-row">
-        <label class="spec-label" for="mail-subject">Subject:</label>
-        <input type="text" id="mail-subject" class="field-input email-readonly" readonly />
-      </div>
-      <div class="email-field-row">
-        <label class="spec-label" for="mail-body">Requisition Letter:</label>
-        <textarea id="mail-body" class="field-input email-body" rows="10"></textarea>
+      <!-- Venue & Booking Summary Card -->
+      <div style="background:var(--mint-bg); border:1px solid var(--mint-border); border-radius:8px; padding:1rem; margin-bottom:1.25rem;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; font-size:0.85rem;">
+          <div>
+            <span style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase; font-weight:700;">Venue &amp; Room:</span>
+            <div id="req-venue-name" style="font-weight:700; color:var(--teal-900);">—</div>
+          </div>
+          <div>
+            <span style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase; font-weight:700;">Department:</span>
+            <div id="req-dept-name" style="font-weight:600; color:var(--text-sec);">—</div>
+          </div>
+          <div>
+            <span style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase; font-weight:700;">Booking Date:</span>
+            <div id="req-date-val" style="font-weight:600; color:var(--teal-900);">—</div>
+          </div>
+          <div>
+            <span style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase; font-weight:700;">Selected Time Slot:</span>
+            <div id="req-slot-val" style="font-weight:700; color:var(--orange-dk);">—</div>
+          </div>
+          <div style="grid-column: span 2;">
+            <span style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase; font-weight:700;">Classroom Capacity:</span>
+            <div id="req-capacity-val" style="font-weight:700; color:var(--teal-900);">—</div>
+          </div>
+        </div>
       </div>
 
-      <div class="details-actions">
-        <button class="btn btn-outline" id="btn-back-from-email">← Back</button>
-        <button class="btn btn-outline" id="btn-open-real-mailto">Open in Webmail</button>
+      <!-- Purpose of Booking -->
+      <div class="email-field-row">
+        <label class="spec-label" for="booking-purpose-input">Purpose / Event Title <span class="req-star">*</span>:</label>
+        <input type="text" id="booking-purpose-input" class="field-input" placeholder="e.g. Guest Lecture, Club Technical Workshop, Seminar" value="Classroom / Academic Activity" />
+      </div>
+
+      <!-- Expected Attendees -->
+      <div class="email-field-row">
+        <label class="spec-label" for="booking-attendees-input">Expected Attendees Count:</label>
+        <input type="number" id="booking-attendees-input" class="field-input" placeholder="e.g. 50" min="1" value="40" />
+      </div>
+
+      <!-- Routing Info Banner -->
+      <div style="background:#f0fdfa; border:1px solid #99f6e4; border-radius:6px; padding:0.75rem 1rem; font-size:0.8rem; color:#0f766e; margin-top:0.5rem; display:flex; align-items:center; gap:0.5rem;">
+        <span>🛡️</span>
+        <span><strong>Admin Direct Route:</strong> This request goes directly to the Administrator's Dashboard under <em>Pending Requisitions</em>. No manual email sending is required.</span>
+      </div>
+
+      <!-- Hidden fallback inputs so existing DOM references don't fail -->
+      <input type="hidden" id="mail-to" />
+      <input type="hidden" id="mail-subject" />
+      <textarea id="mail-body" style="display:none;"></textarea>
+      <button id="btn-open-real-mailto" style="display:none;"></button>
+
+      <div class="details-actions" style="margin-top:1.25rem;">
+        <button class="btn btn-outline" id="btn-back-from-email">← Cancel</button>
         <button class="btn btn-primary" id="btn-send-email-confirm">
-          <span>Send Email &bull; Confirm Booking</span>
+          <span>📨 Submit Request to Admin</span>
         </button>
       </div>
     </div>
@@ -850,8 +882,8 @@
   <div class="modal-overlay" id="booking-success-modal">
     <div class="auth-modal-card success-card">
       <div class="success-icon">🎉</div>
-      <h2 class="success-heading">Venue Reservation Confirmed!</h2>
-      <p class="success-sub">A formal reservation ticket and requisition email have been dispatched.</p>
+      <h2 class="success-heading">Booking Request Sent to Admin!</h2>
+      <p class="success-sub">Your reservation request has been directly submitted to the Department Administrator account for review and approval.</p>
       
       <div class="ticket-details">
         <div class="ticket-row"><span>Booking ID</span><strong id="ticket-id">—</strong></div>
@@ -859,11 +891,12 @@
         <div class="ticket-row"><span>Department</span><strong id="ticket-dept">—</strong></div>
         <div class="ticket-row"><span>Date</span><strong id="ticket-date">—</strong></div>
         <div class="ticket-row"><span>Reserved Slot</span><strong id="ticket-slot">—</strong></div>
+        <div class="ticket-row"><span>Status</span><strong style="color:#d97706;">⏳ Pending Admin Approval</strong></div>
       </div>
       
       <div class="details-actions" style="margin-top:1.5rem">
         <button class="btn btn-outline" id="btn-success-book-more">Book Another Venue</button>
-        <button class="btn btn-primary" id="btn-success-view-bookings">View My Bookings</button>
+        <button class="btn btn-primary" id="btn-success-view-bookings">View in My Bookings</button>
       </div>
     </div>
   </div>
