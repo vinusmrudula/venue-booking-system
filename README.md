@@ -29,21 +29,6 @@ You can run the application in either of the two ways below:
 
 ---
 
-## 🔑 Demo Login Accounts
-
-All accounts use official `.ac.in` email validation:
-
-| Role | Email | Password | Department |
-| :--- | :--- | :--- | :--- |
-| **Admin** | `admin.cse@college.ac.in` | `password123` | Computer Science (New Wing) |
-| **Faculty** | `sunita.faculty@college.ac.in` | `password123` | Electrical Engineering |
-| **Student** | `aman.student@college.ac.in` | `password123` | Computer Science (New Wing) |
-| **Student** | `purva.patel@college.ac.in` | `password123` | Computer Science (New Wing) |
-
-> 💡 *Tip: On the Login/Register popup, you can also register any new account ending with `.ac.in`!*
-
----
-
 ## ✨ Key Features & Architecture
 
 1. **Front Landing Page with Department Small Boxes**:
