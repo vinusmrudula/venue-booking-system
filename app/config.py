@@ -7,14 +7,8 @@ load_dotenv()
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
+
 def get_database_uri():
-    """
-    Constructs and normalizes the Database connection URI.
-    Supports:
-    1. Full DATABASE_URL from environment or cloud platforms (PostgreSQL, MySQL, SQLite)
-    2. Automatic graceful fallback to local SQLite (instance/venue_booking.db) if MySQL is unreachable.
-       (Ensures 100% turnkey startup out-of-the-box on any computer without manual database installs!)
-    """
     raw_url = os.getenv('DATABASE_URL')
 
     instance_dir = os.path.join(os.path.dirname(BASE_DIR), 'instance')
@@ -22,61 +16,44 @@ def get_database_uri():
     sqlite_db_path = os.path.join(instance_dir, 'venue_booking.db').replace('\\', '/')
     sqlite_uri = f"sqlite:///{sqlite_db_path}"
 
-    if raw_url:
-        raw_url = raw_url.strip()
-        if raw_url.startswith('mysql://'):
-            raw_url = raw_url.replace('mysql://', 'mysql+pymysql://', 1)
-        elif raw_url.startswith('postgres://'):
-            return raw_url.replace('postgres://', 'postgresql://', 1)
-        elif raw_url.startswith('sqlite:'):
-            return raw_url
+    if not raw_url:
+        return sqlite_uri
 
-        # If it's a MySQL URL, test if MySQL server is actually reachable
-        if raw_url.startswith('mysql+pymysql'):
-            try:
-                import pymysql
-                # Quick test connection with 1s timeout
-                mysql_user = os.getenv('MYSQL_USER', 'root')
-                mysql_password = os.getenv('MYSQL_PASSWORD', '')
-                mysql_host = os.getenv('MYSQL_HOST', 'localhost')
-                mysql_port = int(os.getenv('MYSQL_PORT', '3306'))
-                pymysql.connect(
-                    host=mysql_host,
-                    port=mysql_port,
-                    user=mysql_user,
-                    password=mysql_password,
-                    connect_timeout=1
-                ).close()
-                return raw_url
-            except Exception:
-                # MySQL not reachable locally, use turnkey SQLite
-                return sqlite_uri
+    raw_url = raw_url.strip()
 
+    if raw_url.startswith('mysql://'):
+        raw_url = raw_url.replace('mysql://', 'mysql+pymysql://', 1)
+    elif raw_url.startswith('postgres://'):
+        return raw_url.replace('postgres://', 'postgresql://', 1)
+    elif raw_url.startswith('sqlite:'):
         return raw_url
 
-    # Check if explicit MySQL requested
-    use_mysql = os.getenv('USE_MYSQL', 'False').lower() in ('true', '1', 'yes')
-    if use_mysql:
+    if raw_url.startswith('mysql+pymysql://'):
+        # Use the complete host, username, password, and port from DATABASE_URL.
+        # Do not test localhost or silently switch to SQLite in production.
+        if os.getenv('FLASK_ENV', 'development').lower() == 'production':
+            return raw_url
+
         try:
+            from sqlalchemy.engine import make_url
             import pymysql
-            mysql_user = os.getenv('MYSQL_USER', 'root')
-            mysql_password = os.getenv('MYSQL_PASSWORD', '')
-            mysql_host = os.getenv('MYSQL_HOST', 'localhost')
-            mysql_port = int(os.getenv('MYSQL_PORT', '3306'))
-            mysql_db = os.getenv('MYSQL_DATABASE', os.getenv('MYSQL_DB', 'venue_booking'))
+
+            parsed = make_url(raw_url)
             pymysql.connect(
-                host=mysql_host,
-                port=mysql_port,
-                user=mysql_user,
-                password=mysql_password,
-                connect_timeout=1
+                host=parsed.host,
+                port=parsed.port or 3306,
+                user=parsed.username,
+                password=parsed.password,
+                database=parsed.database,
+                connect_timeout=5,
+                ssl={'ssl_verify_cert': True, 'ssl_verify_identity': True}
             ).close()
-            auth = f"{mysql_user}:{mysql_password}@" if mysql_password else f"{mysql_user}@"
-            return f"mysql+pymysql://{auth}{mysql_host}:{mysql_port}/{mysql_db}?charset=utf8mb4"
+            return raw_url
         except Exception:
             return sqlite_uri
 
-    return sqlite_uri
+    return raw_url
+
 
 
 class Config:
