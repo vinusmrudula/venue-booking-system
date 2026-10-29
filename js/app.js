@@ -5,7 +5,7 @@
  * Features:
  * - Style Search Results view matching user reference (Image 2)
  * - 4 Time Slot Availability Boxes (Morning, Mid-Day, Afternoon, Evening)
- * - Information of Departments Directory (All 13 departments with classrooms & amenities)
+ * - Information of Departments Directory (All 9 departments with classrooms & amenities)
  * - About Us & Contact Us interactive features
  * - Previous/Next day date navigation
  * - Pure Vanilla JavaScript with clear, human-readable architecture
@@ -739,7 +739,7 @@ DOM.btnClearSearch.addEventListener("click", () => {
 });
 
 // ============================================================================
-// INFORMATION OF DEPTS DIRECTORY (All 13 Departments Grid & Modal)
+// INFORMATION OF DEPTS DIRECTORY (All 9 Departments Grid & Modal)
 // ============================================================================
 
 function renderDepartmentsDirectory(filterQuery = "") {
@@ -2029,7 +2029,7 @@ function initApp() {
   updateLiveClock();
   setInterval(updateLiveClock, 1000);
 
-  // Render the 13 College Departments Directory
+  // Render the 9 College Departments Directory
   renderDepartmentsDirectory();
 
   // If user already logged in, show warm welcome

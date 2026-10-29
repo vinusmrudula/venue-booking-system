@@ -16,13 +16,13 @@ const ApiConfig = {
   BASE_URL: window.location.origin + "/api",
   MOCK_DELAY_MS: 200,
   STORAGE_KEYS: {
-    USERS: "bookit_users_db_v3",
-    CURRENT_USER: "bookit_current_user_v3",
-    AUTH_TOKEN: "bookit_auth_token_v3",
-    VENUES: "bookit_venues_db_v3",
-    BOOKINGS: "bookit_bookings_db_v3",
-    PENDING_USER: "bookit_pending_user_v3",
-    OTP_STORE: "bookit_otp_store_v3"
+    USERS: "bookit_users_db_v4",
+    CURRENT_USER: "bookit_current_user_v4",
+    AUTH_TOKEN: "bookit_auth_token_v4",
+    VENUES: "bookit_venues_db_v4",
+    BOOKINGS: "bookit_bookings_db_v4",
+    PENDING_USER: "bookit_pending_user_v4",
+    OTP_STORE: "bookit_otp_store_v4"
   }
 };
 
