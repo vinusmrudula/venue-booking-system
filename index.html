@@ -33,7 +33,7 @@
 
     <nav class="header-nav" id="nav-menu">
       <a href="#section-about" class="nav-link" id="nav-about-btn">ℹ️ About Us</a>
-      <a href="#" class="nav-link" id="nav-prev-bookings-btn" style="display:none">📋 My Bookings</a>
+      <a href="bookings.html" class="nav-link" id="nav-prev-bookings-btn" style="display:none">📋 My Bookings</a>
 
       <!-- User badge (shown when logged in) -->
       <div class="nav-user-badge" id="nav-user-badge" style="display:none">
@@ -638,17 +638,6 @@
           <button type="submit" class="btn-auth-submit" id="signin-submit-btn">
             <span>Sign In</span>
           </button>
-
-          <!-- 1-Click Demo Accounts Quick Fill -->
-          <div style="margin-top: 1rem; padding: 0.65rem 0.85rem; background: #f0fdfa; border: 1px solid #b2ded9; border-radius: 8px; font-size: 0.8rem; text-align: left;">
-            <div style="font-weight: 700; color: #0c4340; margin-bottom: 0.4rem;">⚡ Quick Demo Accounts (1-Click Fill)</div>
-            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
-              <button type="button" class="btn-demo-fill" data-email="aman.student@college.ac.in" style="font-size: 0.75rem; padding: 0.3rem 0.6rem; background: #ffffff; border: 1px solid #99f6e4; border-radius: 4px; cursor: pointer; color: #0f5450; font-weight: 600;">🎓 Aman (Student)</button>
-              <button type="button" class="btn-demo-fill" data-email="sunita.faculty@college.ac.in" style="font-size: 0.75rem; padding: 0.3rem 0.6rem; background: #ffffff; border: 1px solid #99f6e4; border-radius: 4px; cursor: pointer; color: #0f5450; font-weight: 600;">👩‍🏫 Dr. Sunita (Faculty)</button>
-              <button type="button" class="btn-demo-fill" data-email="purva.patel@college.ac.in" style="font-size: 0.75rem; padding: 0.3rem 0.6rem; background: #ffffff; border: 1px solid #99f6e4; border-radius: 4px; cursor: pointer; color: #0f5450; font-weight: 600;">⭐ Purva (Student Lead)</button>
-              <button type="button" class="btn-demo-fill" data-email="admin.cse@college.ac.in" style="font-size: 0.75rem; padding: 0.3rem 0.6rem; background: #ffffff; border: 1px solid #99f6e4; border-radius: 4px; cursor: pointer; color: #0f5450; font-weight: 600;">🛡️ Prof. Rajesh (Dept Admin)</button>
-            </div>
-          </div>
         </form>
         <p class="auth-switch-text">
           New to BookIt? <a href="#" id="goto-register-link" class="link-teal">Create an account</a>
@@ -680,10 +669,10 @@
               <option value="">— Select your role —</option>
               <option value="student">Student Organizer</option>
               <option value="faculty">Faculty Member</option>
-              <option value="admin">Department Staff / Admin (Requires Super-Admin Approval)</option>
+              <option value="admin">Department Staff / Admin (Requires Supervisor Approval)</option>
             </select>
-            <div id="admin-role-hint" style="display:none; font-size:0.75rem; color:#b45309; background:#fef3c7; border:1px solid #fcd34d; padding:0.4rem 0.6rem; border-radius:4px; margin-top:0.35rem;">
-              🛡️ <strong>Note:</strong> Admin profiles require verification from designated supervisors (vinaynm25.aiml, vazeba25.comp, or vhankalasph25.comp) before activation.
+            <div id="admin-role-hint" style="display:none; font-size:0.75rem; color:#b45309; background:#fef3c7; border:1px solid #fcd34d; padding:0.5rem 0.75rem; border-radius:6px; margin-top:0.35rem; line-height:1.4;">
+              🛡️ <strong>Note:</strong> Admin registration requests will be forwarded to the designated administrators: Purva (PurvaV@college.ac.in), Mrudula (MrudulaN@college.ac.in), and Bhargav (BhargavV@college.ac.in). One of them must approve before your Admin account is activated.
             </div>
             <span class="field-error" id="reg-role-error"></span>
           </div>

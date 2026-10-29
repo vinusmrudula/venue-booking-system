@@ -1090,24 +1090,12 @@ async function openPreviousBookingsModal() {
     if (user.role === "admin") {
       // -------------------------------------------------------------
       // DEPARTMENT ADMIN PORTAL
+      // Now navigates to bookings.html for full experience.
+      // This modal is a fallback - redirect to dedicated page.
       // -------------------------------------------------------------
-      if (modalTitle) modalTitle.innerHTML = `🏛️ Department Requisition &amp; Approval Portal`;
-
-      // Admin requisition filter
-      const pendingList = allBookings.filter((b) => {
-        const isPending = b.status === "Pending Approval" || b.status === "Pending";
-        if (!isPending) return false;
-        if (!user.dept || user.dept === "all" || user.dept === "Academic Complex") return true;
-        return true;
-      });
-
-      // Filter processed bookings for this campus admin
-      const historyList = allBookings.filter((b) => {
-        const isPending = b.status === "Pending Approval" || b.status === "Pending";
-        if (isPending) return false;
-        if (!user.dept || user.dept === "all" || user.dept === "Academic Complex") return true;
-        return true;
-      });
+      if (modal) modal.classList.remove("active");
+      window.location.href = "bookings.html";
+      return;
 
       contentContainer.innerHTML = `
         <!-- Admin Profile Banner -->
@@ -1681,7 +1669,7 @@ DOM.otpForm.addEventListener("submit", async (e) => {
     const result = await ApiService.verifyRegistrationOtp(AppState.pendingOtpEmail, enteredCode);
     if (result.requiresApproval) {
       showToast(result.message, "success");
-      alert("Admin Account Registration Submitted!\n\nAn authorization email has been sent to the designated administrators:\n- vinaynm25.aiml@coeptech.ac.in\n- vazeba25.comp@coeptech.ac.in\n- vhankalasph25.comp@coeptech.ac.in\n\nYour account will be activated once verified by either of them.");
+      alert("Admin Account Registration Submitted!\n\nAn authorization request has been sent to the designated administrators:\n• Purva (PurvaV@college.ac.in)\n• Mrudula (MrudulaN@college.ac.in)\n• Bhargav (BhargavV@college.ac.in)\n\nOne of them will review and approve your request to activate your Admin account.");
     } else {
       showToast(`Welcome to BookIt, ${result.user.name}! Your account is verified.`);
     }
@@ -1890,12 +1878,12 @@ function setupEventListeners() {
     }
   });
 
-  // My Bookings
+  // My Bookings & Admin Dashboard (Opens Dedicated Page)
   if (DOM.navPrevBookingsBtn) {
     DOM.navPrevBookingsBtn.addEventListener("click", (e) => {
       e.preventDefault();
       if (DOM.navMenu) DOM.navMenu.classList.remove("show-mobile");
-      openPreviousBookingsModal();
+      window.location.href = "bookings.html";
     });
   }
 

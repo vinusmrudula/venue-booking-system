@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Bookings &amp; Admin Dashboard — BookIt Venue Booking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .page-wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--mint-bg);
+    }
+    .page-main-container {
+      max-width: 1240px;
+      margin: 2rem auto;
+      padding: 0 1.5rem 3rem;
+      flex: 1;
+      width: 100%;
+    }
+    .page-header-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .page-title-block h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--teal-900);
+      line-height: 1.25;
+      margin-bottom: 0.35rem;
+    }
+    .page-title-block p {
+      font-size: 0.88rem;
+      color: var(--text-sec);
+    }
+    .page-stats-summary {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .stat-chip {
+      background: var(--mint-bg);
+      border: 1px solid var(--mint-border);
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      min-width: 110px;
+    }
+    .stat-chip-num {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--teal-900);
+      line-height: 1.2;
+    }
+    .stat-chip-lbl {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .section-box {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .section-box-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.85rem;
+    }
+    .section-box-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--teal-900);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .empty-placeholder {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      background: #f8fafc;
+      border: 1.5px dashed var(--border);
+      border-radius: 10px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+    .empty-placeholder-icon {
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+    }
+    .live-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      margin-right: 6px;
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page-wrapper">
+
+    <!-- Top Utility Bar -->
+    <div class="utility-bar">
+      <div class="util-left">
+        <span>🏛️ College Venue &amp; Facility Booking System</span>
+        <span class="util-badge">Official Portal</span>
+      </div>
+      <div class="util-right" id="util-datetime" style="font-weight:600; color:#c8edeb; display:flex; align-items:center; gap:0.5rem;"></div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="app-header">
+      <a href="index.html" class="brand-btn" aria-label="Back to BookIt Home">
+        <img src="assets/logo.jpg" alt="BookIt Logo" class="header-logo" />
+      </a>
+
+      <nav class="header-nav" id="nav-menu">
+        <a href="index.html" class="nav-link" id="nav-home-btn">🏠 Back to Venue Booking</a>
+        
+        <!-- User Badge -->
+        <div class="nav-user-badge" id="nav-user-badge">
+          <div class="user-avatar" id="user-avatar-char">U</div>
+          <div>
+            <span id="nav-user-name" style="font-weight:700;">Loading User...</span>
+            <span id="nav-user-role-badge" style="font-size:0.68rem; padding:0.1rem 0.4rem; border-radius:10px; background:#e0f2fe; color:#0369a1; font-weight:800; margin-left:4px; text-transform:uppercase;">Student</span>
+          </div>
+        </div>
+
+        <button class="btn-logout" id="nav-logout-btn">Logout</button>
+      </nav>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="page-main-container">
+      
+      <!-- Top Profile & Header Card -->
+      <div class="page-header-card" id="page-header-card">
+        <div class="page-title-block">
+          <h1 id="page-hero-title">My Venue Requisitions</h1>
+          <p id="page-hero-subtitle">View real-time updates of your facility reservation requests, cancellations, and approved tickets.</p>
+        </div>
+
+        <div class="page-stats-summary" id="page-stats-summary">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Main Dynamic Content Wrapper -->
+      <div id="bookings-dynamic-content">
+        <div style="text-align:center; padding:4rem;">
+          <div class="spinner" style="margin:0 auto 1rem;"></div>
+          <p style="color:var(--text-sec); font-weight:600;">Loading your records &amp; real-time updates...</p>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer" style="margin-top:auto;">
+      <div class="footer-bottom-strip">
+        <p>&copy; 2026 BookIt College Facility Booking System &bull; Official Administration Portal</p>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ==============================
+       ADMIN DECISION & EMAIL MODAL
+  ================================-->
+  <div class="modal-overlay" id="admin-decision-modal" style="z-index: 960;">
+    <div class="details-modal-card" style="max-width: 650px;">
+      <button class="modal-close-btn" id="close-admin-decision-btn">✕</button>
+      <h2 class="details-title" id="admin-decision-title">📋 Requisition Decision &amp; Email Dispatch</h2>
+
+      <!-- Requisition Summary Card -->
+      <div id="admin-decision-summary" style="background:#f0fdfa; border:1px solid #99f6e4; border-radius:8px; padding:0.85rem 1rem; margin-bottom:1rem; font-size:0.85rem;"></div>
+
+      <!-- Decision Reason Textarea -->
+      <div class="email-field-row">
+        <label class="spec-label" for="admin-decision-reason" style="font-weight:700; color:var(--teal-900);">
+          Reason / Administrative Remarks: <span class="req-star">*</span>
+        </label>
+        <textarea id="admin-decision-reason" class="field-input" rows="3" placeholder="Enter reason or instructions for the applicant..."></textarea>
+        <span class="field-error" id="admin-decision-reason-error" style="display:none; font-size:0.75rem; color:#dc2626; margin-top:0.25rem;">Please enter an administrative reason or remarks.</span>
+      </div>
+
+      <!-- Email Dispatch Preview -->
+      <div style="margin-top:0.9rem; border-top:1px solid var(--border); padding-top:0.9rem;">
+        <div style="font-size:0.83rem; font-weight:700; color:var(--teal-900); margin-bottom:0.6rem; display:flex; align-items:center; gap:0.4rem;">
+          <span>✉️</span> Formal Notification Email (Dispatched from Admin Account)
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem;">
+          <div class="email-field-row" style="margin-bottom:0.6rem;">
+            <label class="spec-label" for="admin-mail-from" style="font-size:0.78rem;">From (Admin):</label>
+            <input type="text" id="admin-mail-from" class="field-input email-readonly" readonly />
+          </div>
+
+          <div class="email-field-row" style="margin-bottom:0.6rem;">
+            <label class="spec-label" for="admin-mail-to" style="font-size:0.78rem;">To (Applicant):</label>
+            <input type="text" id="admin-mail-to" class="field-input email-readonly" readonly />
+          </div>
+        </div>
+
+        <div class="email-field-row" style="margin-bottom:0.6rem;">
+          <label class="spec-label" for="admin-mail-subject" style="font-size:0.78rem;">Subject:</label>
+          <input type="text" id="admin-mail-subject" class="field-input email-readonly" readonly />
+        </div>
+
+        <div class="email-field-row" style="margin-bottom:0.75rem;">
+          <label class="spec-label" for="admin-mail-body" style="font-size:0.78rem;">Email Message Body:</label>
+          <textarea id="admin-mail-body" class="field-input email-body" rows="7"></textarea>
+        </div>
+      </div>
+
+      <div class="details-actions" style="margin-top:1rem;">
+        <button class="btn btn-outline" id="btn-admin-email-cancel">Cancel</button>
+        <button class="btn btn-primary" id="btn-admin-email-confirm">
+          <span>Confirm &amp; Send Decision</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/bookings.js"></script>
+</body>
+</html>
