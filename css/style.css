@@ -1,5 +1,5 @@
 /* ==========================================================================
-   BookIt — College Venue Booking Platform
+   BookIt — College Venue Booking System
    Color Scheme: Dark Teal (#0c4340) + Soft Mint (#ebf5f2) + Orange (#e8620a)
    Font: Plus Jakarta Sans
    ========================================================================== */
@@ -179,17 +179,15 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   color: #fff;
 }
 
-/* SINGLE AUTH BUTTON in header as requested */
 .btn-login-register {
   background: var(--orange);
   color: #fff;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 700;
-  padding: 0.55rem 1.25rem;
+  padding: 0.5rem 1.15rem;
   border-radius: 6px;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
   transition: background 0.2s, transform 0.15s;
-  box-shadow: 0 2px 8px rgba(232,98,10,0.25);
 }
 .btn-login-register:hover {
   background: var(--orange-dk);
@@ -1261,8 +1259,9 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 
 .contact-grid {
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: 1fr 1.2fr;
   gap: 2.5rem;
+  margin-top: 2.5rem;
 }
 
 .contact-info-card, .contact-form-card {
@@ -1304,19 +1303,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .contact-detail-row p {
   font-size: 0.83rem;
   color: var(--text-sec);
-  line-height: 1.5;
-}
-
-.address-highlight {
-  font-size: 0.88rem !important;
-  line-height: 1.6 !important;
-  color: var(--teal-950) !important;
-  background: var(--mint-bg);
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  border: 1px solid var(--mint-border);
-  margin-top: 0.35rem;
-  font-weight: 600;
+  line-height: 1.45;
 }
 
 .contact-alert-box {
@@ -1646,13 +1633,13 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   margin-top: -0.2rem;
 }
 .link-small { font-size: 0.78rem; color: var(--teal-600); }
-.link-teal { color: var(--teal-700); font-weight: 600; }
 .auth-switch-text {
   text-align: center;
   font-size: 0.83rem;
   color: var(--text-muted);
   margin-top: 1rem;
 }
+.link-teal { color: var(--teal-700); font-weight: 600; }
 
 /* OTP Modal */
 .otp-card { text-align: center; max-width: 380px; }
@@ -2029,4 +2016,162 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   .footer-container {
     grid-template-columns: 1fr;
   }
+}
+
+/* ==========================================================================
+   DEPARTMENTS IN SMALL BOXES (Compact, Modern & Attractive)
+   ========================================================================== */
+.departments-grid,
+.dept-small-boxes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.15rem;
+}
+
+/* Individual Department Small Box */
+.dept-box {
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px rgba(12, 67, 64, 0.05);
+  transition: all 0.22s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.dept-box::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--dept-accent, linear-gradient(90deg, #0c4340, #1a8c84));
+}
+
+.dept-box:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(12, 67, 64, 0.12);
+  border-color: var(--teal-600);
+}
+
+.dept-box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.65rem;
+}
+
+.dept-box-icon {
+  font-size: 1.45rem;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: var(--mint-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--mint-border);
+}
+
+.dept-box-badge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 0.2rem 0.55rem;
+  border-radius: 12px;
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+  letter-spacing: 0.03em;
+}
+
+.dept-box-title {
+  font-size: 0.96rem;
+  font-weight: 800;
+  color: var(--teal-900);
+  line-height: 1.35;
+  margin-bottom: 0.5rem;
+  min-height: 2.6rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.dept-box-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.65rem;
+}
+
+.dept-box-pill {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  background: var(--mint-bg);
+  color: var(--text-sec);
+  border: 1px solid var(--mint-border);
+}
+
+.dept-box-rooms-preview {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 0.75rem;
+}
+.dept-box-rooms-preview strong {
+  color: var(--text-sec);
+}
+
+.dept-box-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 0.65rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.btn-dept-book {
+  flex: 1;
+  background: var(--teal-800);
+  color: #ffffff !important;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  text-align: center;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  text-decoration: none;
+}
+.btn-dept-book:hover {
+  background: var(--teal-900);
+  box-shadow: 0 2px 8px rgba(12, 67, 64, 0.2);
+}
+
+.btn-dept-info {
+  background: #f8fafc;
+  color: var(--teal-800);
+  border: 1px solid var(--border);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.5rem 0.65rem;
+  border-radius: 8px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.btn-dept-info:hover {
+  background: var(--mint-bg);
+  border-color: var(--teal-600);
 }
