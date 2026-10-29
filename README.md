@@ -1,254 +1,78 @@
+# 🏛️ Venue Booking System (BookIt)
 
-# Venue Booking System
-
-## Overview
-
-A platform for simplifying the booking of college venues, including classrooms, seminar halls, and auditoriums.
-
-## Core Features
-
-- View available college venues.
-- Check venue availability for a selected date and time.
-- Create and manage reservations.
-- Prevent conflicting bookings.
-- View booking details and reservation status.
-
-## Project Status
-
-Initial setup and planning.
-
-## Technology Stack
-
-To be finalized after High-Level Design (HLD) and Low-Level Design (LLD).
-
-## Setup Instructions
-
-Setup instructions will be added after the technology stack is finalized.
-
-## Team
-
-Add team member names and responsibilities here.
-
-## Development Workflow
-
-- Develop features on separate branches.
-- Use descriptive commits following `type: description`.
-- Open pull requests for review.
-- Merge reviewed pull requests into `main`.
-## Flask Backend Setup
-
-### Prerequisites
-- Python installed
-- Git installed
-
-### Run the Backend Locally
-
-1. Activate the Python virtual environment:
-
-   ```cmd
-   .venv\Scripts\activate.bat
-   ```
-
-2. Install the required dependencies:
-
-   ```cmd
-   python -m pip install -r requirements.txt
-   ```
-
-3. Start the Flask server:
-
-   ```cmd
-   python app.py
-   ```
-
-4. Open `http://127.0.0.1:5000/` in your browser.
-
-### Current Backend Status
-The Flask backend currently provides a basic API health-check endpoint. Venue availability, booking management, approval workflows, and automated email notifications will be implemented in subsequent development steps.
-
-### Email Configuration
-Email settings will be configured using environment variables. Keep credentials in a local `.env` file and never commit real credentials to GitHub.
-# BookIt - College Facility & Venue Booking System
-
-A web platform designed to simplify reserving classrooms, seminar halls, auditoriums, and labs across college departments, complete with real-time availability checks, clash prevention, and administrative approval workflows.
+An attractive, full-stack college venue and facility reservation system with real-time slot clash detection, official `.ac.in` domain authentication with OTP verification, dynamic capacity calculations, and an administrative approval workflow.
 
 ---
 
-## 🎨 Theme & Visual Design
-- **Primary Color:** Dark Teal (`#0c4340` / `#0f5450`)
-- **Background Color:** Soothing Mint (`#eaf4f1` / `#f4faf8`)
-- **Tone:** Medium brightness, comfortable contrast, human-designed aesthetic.
-- **Logo & Artwork:** Official BookIt 3D emblem with glowing globe, dark-teal typography, and ambient warm study accents.
-- **College Domain:** Strictly enforces official **`.ac.in`** college emails.
-- **Authentication:** Two-step account creation with interactive **4-digit OTP verification**.
+## 🚀 Quick Start (Running the Application)
+
+You can run the application in either of the two ways below:
+
+### Option 1: Standalone Web Server (Recommended & Zero External Setup)
+- **Double click** `start-server.bat` OR run in terminal:
+  ```bash
+  python server.py
+  ```
+- Opens immediately at **`http://localhost:5050`** in your browser.
+- Uses Python's built-in standard library with zero external dependencies!
+
+### Option 2: Full-Stack Flask Backend & API
+- **Double click** `start-backend.bat` OR run in terminal:
+  ```bash
+  python run.py
+  ```
+- Opens at **`http://127.0.0.1:5000`** with live Flask REST endpoints (`/api/auth`, `/api/venues`, `/api/bookings`, `/api/admin`).
+- Comes with a self-contained, pre-seeded SQLite database in `instance/venue_booking.db` (and automatic graceful fallback from MySQL).
 
 ---
 
-## 🏛️ Campus Branches & Facilities Included:
-- **Academic Complex** (AC 101, AC 202)
-- **Cognizant Lab** (High-tech innovation computer lab)
-- **Department of Computer Science and Engineering (new)** (NC 27, NC 28, Seminar Hall)
-- **Department of Computer Science and Engineering (old)** (Old CSE 12, Algo Research Lab)
-- **Department of Electrical Engineering** (EE 101, EE 102)
-- **Department of Electronics & Telecommunication Engineering** (E&TC 201, E&TC Seminar)
-- **Department of Civil Engineering** (Civil Hall 05, Civil Drawing Studio)
-- **Department of Mechanical Engineering** (ME 201, Mech Seminar Hall)
-- **Department of Manufacturing Engineering & Industrial Management** (Mfg Hall 10, CIM Lab)
-- **Department of Metallurgy and Material Engineering** (Meta Hall 01)
-- **Department of Planning** (Planning Studio 01)
-- **Main Auditorium** (900-seat grand auditorium)
-- **Mini Auditorium** (250-seat convention hall)
+## 🔑 Demo Login Accounts
+
+All accounts use official `.ac.in` email validation:
+
+| Role | Email | Password | Department |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `admin.cse@college.ac.in` | `password123` | Computer Science (New Wing) |
+| **Faculty** | `sunita.faculty@college.ac.in` | `password123` | Electrical Engineering |
+| **Student** | `aman.student@college.ac.in` | `password123` | Computer Science (New Wing) |
+| **Student** | `purva.patel@college.ac.in` | `password123` | Computer Science (New Wing) |
+
+> 💡 *Tip: On the Login/Register popup, you can also register any new account ending with `.ac.in`!*
 
 ---
 
-## 🚀 Quick Start (Zero Dependencies)
-You do **not** need Node.js, npm, or any external framework to run this application!
+## ✨ Key Features & Architecture
 
-1. Open your project folder: `Venue Booking`
-2. Double-click **`index.html`** to launch the full application in any browser (Chrome, Edge, Firefox, Safari).
-3. Double-click **`slides.html`** to present the project slides with Bhargav to your review panel.
+1. **Front Landing Page with Department Small Boxes**:
+   - Modern, simple, and attractive layout following the `Venue Booking Modified` design.
+   - All **13 campus departments** are displayed in **compact, elegant small boxes** with:
+     - Department icon and short code badge (`CSE-NEW`, `CIVIL`, `AC`, `ELEC`, etc.)
+     - Venue count and total student seating capacity
+     - Classroom list preview
+     - **1-Click "Book Venue &rarr;"**: Auto-selects the department in the search panel and focuses the date picker
+     - **"ℹ️ Info" Modal**: Opens detailed specifications, lab equipment, projector availability, and HOD contact details
+   - Live interactive search filter to quickly find any department or classroom.
 
-### 🔑 Demo Accounts Provided:
-- **Student Account:** `aman.student@college.ac.in` | Password: `password123`
-- **Faculty Account:** `sunita.faculty@college.ac.in` | Password: `password123`
-- *Or click "Create an Account" to register and test the OTP verification flow!*
+2. **Real-Time 4-Slot Availability System**:
+   - Classrooms support standard working college slots:
+     - **Morning**: `08:00 AM - 11:00 AM`
+     - **Mid-Day**: `11:00 AM - 02:00 PM`
+     - **Afternoon**: `02:00 PM - 05:00 PM`
+     - **Evening**: `05:00 PM - 08:00 PM`
+   - Instant visual indicators (`AVAILABLE` in green, `BOOKED` in red) with double-booking clash prevention.
 
----
+3. **Dynamic Capacity Calculation**:
+   - Follows the campus formula: $\text{Total Capacity} = 2 \times \text{Benches}$.
 
-## 📋 Implementation Track Alignment (Images 1 & 2)
-
-| Track Milestone (Image 2) | Status | What Was Built |
-|---|---|---|
-| **1. Wireframe Finalization** | ✅ Completed | Designed complete component hierarchy, dark teal + mint color palette, and UI state system. |
-| **2. Auth Screens & Landing** | ✅ Completed | Landing screen with App Name "BookIt" and logo, Create Account (Name, College Email, Role, Dept, Password), and Sign In view. |
-| **3. API Integration & Protected Routes** | ✅ Completed | Built asynchronous `ApiService` (`js/api.js`) with validation, route guard (`isAuthenticated()`), error banners, and localStorage database. |
-| **4. Search & Availability Screen** | ✅ Completed | Filter by Category (Classroom/Audi/Seminar/Lab), Dept (New CSE, Electrical, Mechanical), Min Capacity, and Date. "Check Availability" engine with clash detection. |
-| **5. Responsive & Interactive States** | ✅ Completed | Mobile hamburger menu, laptop grid, room details modal (NC 27), approval email composer (Gmail format), success screen, and "Prev Booking" history. |
-| **6. Presentation Slides (with Bhargav)** | ✅ Completed | Built interactive slide deck in `slides.html` ready for college presentation. |
-
----
-
-## 🛠️ Senior Full-Stack Developer Bug Masterclass: Bugs & Solutions
-
-As a senior developer mentor, here is a detailed breakdown of the critical web development bugs that frequently break student and beginner projects, and how we prevented them in BookIt:
-
-### 1. The Form Default Reload Bug
-- **The Bug:** In HTML, submitting a `<form>` triggers the browser's native action, which sends a synchronous GET/POST request and reloads the page. This wipes out all JavaScript variables and resets state back to step 1.
-- **The Solution:** We intercept every form submission using `e.preventDefault()`, validate inputs in JavaScript, show user-friendly inline error hints, and execute asynchronous submission without page flashing.
-
-### 2. Timezone Date Shift Bug
-- **The Bug:** Calling `new Date().toISOString().split('T')[0]` converts the timestamp to UTC. In countries like India (UTC+5:30), if the local time is 3:00 AM, UTC is still the previous day! This causes date pickers to incorrectly highlight yesterday's date.
-- **The Solution:** We wrote a custom `getTodayDateString()` helper using `getFullYear()`, `getMonth() + 1`, and `getDate()`, guaranteeing that dates always respect the local college timezone.
-
-### 3. Asynchronous Race Conditions in Search
-- **The Bug:** If a user rapidly clicks filters or submits multiple requests, slow responses can overwrite newer responses if they return out of order.
-- **The Solution:** Centralized state in `AppState.currentFilters`, with loading spinners and disabled button states during async transactions.
-
-### 4. Venue Clash & Double Booking Bug
-- **The Bug:** Two users booking the same room (e.g. `NC 27`) for the same date at the same time.
-- **The Solution:** Built automated clash validation in `ApiService.createBooking()`. If a room already has an active reservation for that target date, the system rejects the booking and alerts the user with an actionable message.
+4. **Direct Admin Approval & Email Notification**:
+   - Requisitions are automatically submitted to the respective department administrator.
+   - Administrators can review, approve, or reject bookings with administrative remarks and draft formal notification emails.
 
 ---
 
-## 🔌 Connecting Bhargav's Backend (Integration Guide)
+## 🧪 Testing
 
-When Bhargav finishes building the Node.js/Express, Python/Django, or Java/Spring Boot backend, follow these 2 simple steps:
-
-1. Open `js/api.js`.
-2. Update the configuration block at the top:
-```javascript
-const ApiConfig = {
-  USE_MOCK: false, // Set to false to hit the live backend
-  BASE_URL: "http://localhost:5000/api", // Bhargav's server address
-  ...
-};
+To execute the automated test suite (19 test cases covering models, clash detection, capacity calculations, auth, and routing):
+```bash
+pytest
 ```
-All method signatures (`login`, `register`, `searchVenues`, `createBooking`, `getUserBookings`) already return standard Promises and JSON payloads, requiring **zero changes** to your UI logic!
-
----
-
-## 📁 File Structure
-```
-Venue Booking/
-├── assets/
-│   └── logo.jpg          # Official BookIt Application Logo
-├── css/
-│   └── style.css         # Dark Teal + Mint Responsive Design System
-├── js/
-│   ├── data.js           # Facilities dataset (New CSE NC 27/28, Electrical, etc.)
-│   ├── api.js            # Mock API & Authentication service with Promise delays
-│   └── app.js            # Main application router, validation & modal controller
-├── index.html            # Main Single-Page Application
-├── slides.html           # Presentation Slides for Project Review
-└── README.md             # Developer Documentation
-```
-
-# Venue Booking System
-
-## Overview
-
-A platform for simplifying the booking of college venues, including classrooms, seminar halls, and auditoriums.
-
-## Core Features
-
-- View available college venues.
-- Check venue availability for a selected date and time.
-- Create and manage reservations.
-- Prevent conflicting bookings.
-- View booking details and reservation status.
-
-## Project Status
-
-Initial setup and planning.
-
-## Technology Stack
-
-To be finalized after High-Level Design (HLD) and Low-Level Design (LLD).
-
-## Setup Instructions
-
-Setup instructions will be added after the technology stack is finalized.
-
-## Team
-
-Add team member names and responsibilities here.
-
-## Development Workflow
-
-- Develop features on separate branches.
-- Use descriptive commits following `type: description`.
-- Open pull requests for review.
-- Merge reviewed pull requests into `main`.
-## Flask Backend Setup
-
-### Prerequisites
-- Python installed
-- Git installed
-
-### Run the Backend Locally
-
-1. Activate the Python virtual environment:
-
-   ```cmd
-   .venv\Scripts\activate.bat
-   ```
-
-2. Install the required dependencies:
-
-   ```cmd
-   python -m pip install -r requirements.txt
-   ```
-
-3. Start the Flask server:
-
-   ```cmd
-   python app.py
-   ```
-
-4. Open `http://127.0.0.1:5000/` in your browser.
-
-### Current Backend Status
-The Flask backend currently provides a basic API health-check endpoint. Venue availability, booking management, approval workflows, and automated email notifications will be implemented in subsequent development steps.
-
-### Email Configuration
-Email settings will be configured using environment variables. Keep credentials in a local `.env` file and never commit real credentials to GitHub.
