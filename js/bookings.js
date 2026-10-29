@@ -375,7 +375,7 @@ async function renderStudentDashboard(user) {
 
 // The 3 designated Super-Admins who can approve Admin signup requests
 const SUPER_ADMIN_EMAILS = [
-  "purva@college.ac.in",
+  "purvav@college.ac.in",
   "mrudulan@college.ac.in",
   "bhargavv@college.ac.in"
 ];
