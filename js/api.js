@@ -13,11 +13,7 @@
 
 const ApiConfig = {
   USE_MOCK: true,
-//  BASE_URL: window.location.origin + "/api", 
-  /*
-  check here which to take , on backend 
-  */
-  BASE_URL: "http://localhost:5000/api",
+  BASE_URL: window.location.origin + "/api",
   MOCK_DELAY_MS: 200,
   STORAGE_KEYS: {
     USERS: "bookit_users_db_v3",
@@ -32,8 +28,19 @@ const ApiConfig = {
 
 // Initialize Mock Databases in LocalStorage
 function initializeDatabase() {
-  // Always ensure venues database has the latest college departments
-  localStorage.setItem(ApiConfig.STORAGE_KEYS.VENUES, JSON.stringify(INITIAL_VENUES));
+  // Always ensure venues database has the latest college departments with benches & derived capacity
+  const venuesWithBenches = INITIAL_VENUES.map((v) => {
+    const benches = v.benches || (v.capacity ? Math.round(v.capacity / 2) : 30);
+    const cap = benches * 2;
+    return {
+      ...v,
+      benches: benches,
+      capacity: cap,
+      capacityFormula: "total = (2 * benches)",
+      capacityDisplay: `total = (2 * ${benches}) = ${cap} Seats`
+    };
+  });
+  localStorage.setItem(ApiConfig.STORAGE_KEYS.VENUES, JSON.stringify(venuesWithBenches));
 
   // Bookings Database - seed sample bookings if empty or missing pending samples
   const storedBookings = JSON.parse(localStorage.getItem(ApiConfig.STORAGE_KEYS.BOOKINGS) || "[]");
@@ -87,7 +94,38 @@ function initializeDatabase() {
       name: "Prof. Rajesh Verma",
       email: "admin.cse@college.ac.in",
       role: "admin",
+      status: "approved",
       dept: "Department of Computer Science and Engineering (new)",
+      password: "password123",
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "usr-5",
+      name: "Vinay N M (Super Admin)",
+      email: "vinaynm25.aiml@coeptech.ac.in",
+      role: "admin",
+      status: "approved",
+      dept: "Artificial Intelligence & Machine Learning",
+      password: "password123",
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "usr-6",
+      name: "Vazeba (Super Admin)",
+      email: "vazeba25.comp@coeptech.ac.in",
+      role: "admin",
+      status: "approved",
+      dept: "Computer Engineering",
+      password: "password123",
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "usr-7",
+      name: "Vhankalas P H (Super Admin)",
+      email: "vhankalasph25.comp@coeptech.ac.in",
+      role: "admin",
+      status: "approved",
+      dept: "Computer Engineering",
       password: "password123",
       createdAt: new Date().toISOString()
     }
@@ -148,11 +186,13 @@ const ApiService = {
     // 4-digit OTP
     const generatedOtp = String(Math.floor(1000 + Math.random() * 9000));
 
+    const isAdmin = userData.role === "admin";
     const pendingData = {
       id: "usr-" + Date.now(),
       name: userData.name.trim(),
       email: normalizedEmail,
       role: userData.role,
+      status: isAdmin ? "pending_approval" : "approved",
       dept: userData.dept,
       password: userData.password,
       createdAt: new Date().toISOString()
@@ -203,12 +243,38 @@ const ApiService = {
     users.push(pendingUser);
     localStorage.setItem(ApiConfig.STORAGE_KEYS.USERS, JSON.stringify(users));
 
-    const token = "mock_jwt_token_" + Date.now();
-    localStorage.setItem(ApiConfig.STORAGE_KEYS.AUTH_TOKEN, token);
-    localStorage.setItem(ApiConfig.STORAGE_KEYS.CURRENT_USER, JSON.stringify(pendingUser));
+    // Also notify backend if active
+    try {
+      fetch(`${ApiConfig.BASE_URL}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: pendingUser.name,
+          email: pendingUser.email,
+          role: pendingUser.role,
+          department: pendingUser.dept,
+          password: pendingUser.password
+        })
+      }).catch(() => {});
+    } catch (e) {}
+
+    const isAdminPending = pendingUser.role === "admin" && pendingUser.status === "pending_approval";
 
     localStorage.removeItem(ApiConfig.STORAGE_KEYS.PENDING_USER);
     localStorage.removeItem(ApiConfig.STORAGE_KEYS.OTP_STORE);
+
+    if (isAdminPending) {
+      return {
+        success: true,
+        requiresApproval: true,
+        user: pendingUser,
+        message: "Admin account submitted! An authorization request has been dispatched to vinaynm25.aiml@coeptech.ac.in, vazeba25.comp@coeptech.ac.in, and vhankalasph25.comp@coeptech.ac.in. Your account will activate as soon as one approves."
+      };
+    }
+
+    const token = "mock_jwt_token_" + Date.now();
+    localStorage.setItem(ApiConfig.STORAGE_KEYS.AUTH_TOKEN, token);
+    localStorage.setItem(ApiConfig.STORAGE_KEYS.CURRENT_USER, JSON.stringify(pendingUser));
 
     return {
       success: true,
@@ -252,6 +318,10 @@ const ApiService = {
 
     if (!user) {
       throw new Error("Invalid credentials. Please verify your email and password.");
+    }
+
+    if (user.role === "admin" && user.status === "pending_approval") {
+      throw new Error("Your Admin account is pending authorization from the designated administrators (vinaynm25.aiml@coeptech.ac.in, vazeba25.comp@coeptech.ac.in, vhankalasph25.comp@coeptech.ac.in).");
     }
 
     const token = "mock_jwt_token_" + Date.now();
@@ -460,6 +530,19 @@ const ApiService = {
 
     bookings.unshift(newBooking);
     localStorage.setItem(ApiConfig.STORAGE_KEYS.BOOKINGS, JSON.stringify(bookings));
+
+    // Also forward booking request to backend API if live server is running
+    try {
+      const authToken = localStorage.getItem(ApiConfig.STORAGE_KEYS.AUTH_TOKEN);
+      fetch(`${ApiConfig.BASE_URL}/bookings`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(authToken ? { "Authorization": `Bearer ${authToken}` } : {})
+        },
+        body: JSON.stringify(bookingPayload)
+      }).catch(() => {});
+    } catch (e) {}
 
     return newBooking;
   },
