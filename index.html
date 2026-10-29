@@ -70,19 +70,15 @@
           <label class="field-label" for="filter-dept">Building / Department <span class="req-star">*</span></label>
           <select id="filter-dept" class="field-input">
             <option value="">— Select Building / Dept —</option>
-            <option value="academic_complex">Academic Complex</option>
-            <option value="civil">Department of Civil Engineering</option>
-            <option value="cse_new">Department of CSE (New Wing)</option>
-            <option value="cse_old">Department of CSE (Old Wing)</option>
-            <option value="electrical">Department of Electrical Engineering</option>
-            <option value="entc">Department of E&amp;TC Engineering</option>
-            <option value="manufacturing">Department of Manufacturing Engineering</option>
-            <option value="mechanical">Department of Mechanical Engineering</option>
-            <option value="metallurgy">Department of Metallurgy &amp; Materials</option>
-            <option value="planning">Department of Planning</option>
-            <option value="main_audi">Main Auditorium</option>
-            <option value="mini_audi">Mini Auditorium</option>
-            <option value="cognizant_lab">Cognizant Lab</option>
+            <option value="academics_complex">Academics Complex</option>
+            <option value="civil">Civil Engineering</option>
+            <option value="comp_new">Computer New Building</option>
+            <option value="electrical">Electrical Engineering</option>
+            <option value="entc">Electronics &amp; Telecommunication Engineering</option>
+            <option value="management">Management</option>
+            <option value="manufacturing">Manufacturing Engineering &amp; Industrial Mgmt</option>
+            <option value="mechanical">Mechanical Engineering</option>
+            <option value="metallurgy">Metallurgy &amp; Materials Science</option>
           </select>
           <span class="field-error" id="search-dept-error">Please select a building / department</span>
         </div>
@@ -300,7 +296,7 @@
         <span class="section-badge">CAMPUS DIRECTORY</span>
         <h2 class="section-title">Information of Departments &amp; Classrooms</h2>
         <p class="section-desc">
-          Browse complete infrastructure details of all 13 college departments, classroom capacities, digital projection equipment, smart boards, and laboratory facilities.
+          Browse complete infrastructure details of all 9 college departments, classroom capacities, digital projection equipment, smart boards, and laboratory facilities.
         </p>
 
 
@@ -314,7 +310,7 @@
           class="dept-search-input" 
           placeholder="🔎 Filter by department name, classroom, or facility (e.g. Civil, CSE, Lab, AC)..." 
         />
-        <div class="dept-count-badge" id="dept-filtered-count">Showing 13 Departments</div>
+        <div class="dept-count-badge" id="dept-filtered-count">Showing 9 Departments</div>
       </div>
 
       <!-- Department Cards Grid -->
@@ -339,20 +335,20 @@
             BookIt was built to replace outdated physical register logs, eliminate scheduling collisions, and digitize venue permissions for students, faculty, and administrative departments.
           </p>
           <p class="about-body">
-            Whether organizing an international symposium in the Main Auditorium, booking New Classroom 28 for student workshops, or conducting a coding marathon in Cognizant Lab, BookIt gives instant slot-by-slot transparency modeled after Indian Railways’ robust reservation systems.
+            Whether organizing an international symposium in the Main Auditorium, booking NC-27 for student workshops, or reserving Academics Complex halls, BookIt gives instant slot-by-slot transparency modeled after Indian Railways’ robust reservation systems.
           </p>
 
           <div class="about-stats-row">
             <div class="stat-box">
-              <span class="stat-num">13</span>
+              <span class="stat-num">9</span>
               <span class="stat-lbl">Departments &amp; Centers</span>
             </div>
             <div class="stat-box">
-              <span class="stat-num">25+</span>
-              <span class="stat-lbl">Smart Classrooms &amp; Halls</span>
+              <span class="stat-num">48</span>
+              <span class="stat-lbl">Classrooms &amp; Halls</span>
             </div>
             <div class="stat-box">
-              <span class="stat-num">1,500+</span>
+              <span class="stat-num">3,400+</span>
               <span class="stat-lbl">Total Seating Capacity</span>
             </div>
             <div class="stat-box">
@@ -519,10 +515,10 @@
       <div class="footer-col-links">
         <h4 class="footer-heading">Major Facilities</h4>
         <ul class="footer-nav-list">
-          <li><a href="#section-departments">Academic Complex (AC 101, 202)</a></li>
-          <li><a href="#section-departments">New CSE Wing (NC 27, 28)</a></li>
-          <li><a href="#section-departments">Campus Main Auditorium</a></li>
-          <li><a href="#section-departments">Cognizant High-Tech Lab</a></li>
+          <li><a href="#section-departments">Academics Complex (NC01–NC14)</a></li>
+          <li><a href="#section-departments">Computer New Building (NC-27, NC-28)</a></li>
+          <li><a href="#section-departments">Mechanical Eng. (ND01 Auditorium)</a></li>
+          <li><a href="#section-departments">Civil, Electrical, E&amp;TC &amp; more</a></li>
         </ul>
       </div>
 
@@ -695,19 +691,15 @@
             <label class="field-label" for="reg-dept">Department / Branch <span class="req-star">*</span></label>
             <select id="reg-dept" class="field-input">
               <option value="">— Select your department —</option>
-              <option value="Academic Complex">Academic Complex</option>
-              <option value="Department of Civil Engineering">Department of Civil Engineering</option>
-              <option value="Department of Computer Science and Engineering (new)">Department of Computer Science and Engineering (new)</option>
-              <option value="Department of Computer Science and Engineering (old)">Department of Computer Science and Engineering (old)</option>
-              <option value="Department of Electrical Engineering">Department of Electrical Engineering</option>
-              <option value="Department of Electronics &amp; Telecommunication Engineering">Department of Electronics &amp; Telecommunication Engineering</option>
-              <option value="Department of Manufacturing Engineering &amp; Industrial Management">Department of Manufacturing Engineering &amp; Industrial Management</option>
-              <option value="Department of Mechanical Engineering">Department of Mechanical Engineering</option>
-              <option value="Department of Metallurgy and Material Engineering">Department of Metallurgy and Material Engineering</option>
-              <option value="Department of Planning">Department of Planning</option>
-              <option value="Main Auditorium">Main Auditorium</option>
-              <option value="Mini Auditorium">Mini Auditorium</option>
-              <option value="Cognizant Lab">Cognizant Lab</option>
+              <option value="Academics Complex">Academics Complex</option>
+              <option value="Civil Engineering">Civil Engineering</option>
+              <option value="Computer New Building">Computer New Building</option>
+              <option value="Electrical Engineering">Electrical Engineering</option>
+              <option value="Electronics and Telecommunication Engineering">Electronics &amp; Telecommunication Engineering</option>
+              <option value="Management">Management</option>
+              <option value="Manufacturing Engineering and Industrial Management">Manufacturing Engineering &amp; Industrial Management</option>
+              <option value="Mechanical Engineering">Mechanical Engineering</option>
+              <option value="Metallurgy and Materials Science">Metallurgy &amp; Materials Science</option>
             </select>
             <span class="field-error" id="reg-dept-error"></span>
           </div>
