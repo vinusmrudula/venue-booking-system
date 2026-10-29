@@ -41,7 +41,7 @@ const DOM = {
   navSearchBtn:           document.getElementById("nav-search-btn"),
   navDeptBtn:             document.getElementById("nav-dept-btn"),
   navAboutBtn:            document.getElementById("nav-about-btn"),
-  navContactBtn:          document.getElementById("nav-contact-btn"),
+  //navContactBtn:          document.getElementById("nav-contact-btn"),
   navPrevBookingsBtn:     document.getElementById("nav-prev-bookings-btn"),
   navUserBadge:           document.getElementById("nav-user-badge"),
   navUserName:            document.getElementById("nav-user-name"),
@@ -1771,9 +1771,9 @@ function setupEventListeners() {
   DOM.navAboutBtn.addEventListener("click", () => {
     DOM.navMenu.classList.remove("show-mobile");
   });
-  DOM.navContactBtn.addEventListener("click", () => {
-    DOM.navMenu.classList.remove("show-mobile");
-  });
+  // DOM.navContactBtn.addEventListener("click", () => {
+  //   DOM.navMenu.classList.remove("show-mobile");
+  // });
   // Login / Register button
   if (DOM.btnOpenAuth) {
     DOM.btnOpenAuth.addEventListener("click", (e) => {
