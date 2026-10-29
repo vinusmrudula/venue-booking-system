@@ -8,6 +8,40 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
+  <!-- EmailJS: sends OTP directly to user's email from the browser -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    // Initialize EmailJS with your Public Key
+    // Sign up free at https://www.emailjs.com/ and create:
+    //   1. An Email Service (Gmail / Outlook / any SMTP)
+    //   2. An Email Template with variables: {{to_email}}, {{otp_code}}, {{user_name}}
+    // Then paste your IDs below:
+    (function () {
+      emailjs.init({
+        publicKey: "vZAbciN5e9K3MvkUo"   // ← Replace with your EmailJS Public Key
+      });
+    })();
+
+    // Global helper: send OTP email via EmailJS
+    async function sendOtpEmail(toEmail, otpCode, userName) {
+      const SERVICE_ID  = "service_sd077sa";   // ← Replace with your EmailJS Service ID
+      const TEMPLATE_ID = "template_x3m6wos";  // ← Replace with your EmailJS Template ID
+
+      const templateParams = {
+        to_email : toEmail,
+        user_name: userName || toEmail,
+        otp_code : otpCode
+      };
+
+      try {
+        await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams);
+        return { sent: true };
+      } catch (err) {
+        console.warn("[EmailJS] OTP email failed:", err);
+        return { sent: false, error: err };
+      }
+    }
+  </script>
 </head>
 
 <body>
@@ -675,22 +709,6 @@
               🛡️ <strong>Note:</strong> Admin registration requests will be forwarded to the designated administrators: Purva (PurvaV@college.ac.in), Mrudula (MrudulaN@college.ac.in), and Bhargav (BhargavV@college.ac.in). One of them must approve before your Admin account is activated.
             </div>
             <span class="field-error" id="reg-role-error"></span>
-          </div>
-          <div class="field-group">
-            <label class="field-label" for="reg-dept">Department / Branch <span class="req-star">*</span></label>
-            <select id="reg-dept" class="field-input">
-              <option value="">— Select your department —</option>
-              <option value="Academics Complex">Academics Complex</option>
-              <option value="Civil Engineering">Civil Engineering</option>
-              <option value="Computer New Building">Computer New Building</option>
-              <option value="Electrical Engineering">Electrical Engineering</option>
-              <option value="Electronics and Telecommunication Engineering">Electronics &amp; Telecommunication Engineering</option>
-              <option value="Management">Management</option>
-              <option value="Manufacturing Engineering and Industrial Management">Manufacturing Engineering &amp; Industrial Management</option>
-              <option value="Mechanical Engineering">Mechanical Engineering</option>
-              <option value="Metallurgy and Materials Science">Metallurgy &amp; Materials Science</option>
-            </select>
-            <span class="field-error" id="reg-dept-error"></span>
           </div>
           <div class="field-group">
             <label class="field-label" for="reg-password">Password <span class="req-star">*</span></label>

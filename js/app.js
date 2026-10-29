@@ -1606,7 +1606,6 @@ DOM.registerForm.addEventListener("submit", async (e) => {
   const name = DOM.regName.value.trim();
   const email = DOM.regEmail.value.trim();
   const role = DOM.regRole.value;
-  const dept = DOM.regDept.value;
   const password = DOM.regPassword.value;
   let valid = true;
 
@@ -1622,10 +1621,6 @@ DOM.registerForm.addEventListener("submit", async (e) => {
     setFieldError(DOM.regRole, DOM.regRoleError, "Please select your role");
     valid = false;
   }
-  if (!dept) {
-    setFieldError(DOM.regDept, DOM.regDeptError, "Please select your department");
-    valid = false;
-  }
   if (!password || password.length < 6) {
     setFieldError(DOM.regPassword, DOM.regPasswordError, "Password must be at least 6 characters");
     valid = false;
@@ -1636,10 +1631,10 @@ DOM.registerForm.addEventListener("submit", async (e) => {
   DOM.registerSubmitBtn.innerHTML = `<span class="spinner"></span> Sending OTP...`;
 
   try {
-    const result = await ApiService.registerInitiate({ name, email, role, dept, password });
+    const result = await ApiService.registerInitiate({ name, email, role, dept: "", password });
     AppState.pendingOtpEmail = email;
     DOM.otpDisplayEmail.textContent = email;
-    showToast(`Verification code sent! (Simulated OTP: ${result.otp})`);
+    showToast(`Verification code sent! (OTP: ${result.otp})`);
     openOtpModal();
   } catch (err) {
     DOM.registerBannerErrorText.textContent = err.message;
@@ -1723,7 +1718,7 @@ DOM.btnResendOtp.addEventListener("click", async () => {
   if (AppState.otpTimerSeconds > 0) return;
   try {
     const res = await ApiService.resendOtp(AppState.pendingOtpEmail);
-    showToast(`New code sent! (Simulated OTP: ${res.otp})`);
+    showToast(`New code sent! (OTP: ${res.otp})`);
     startOtpCountdown(30);
   } catch (err) {
     showToast("Failed to resend code.", "error");
