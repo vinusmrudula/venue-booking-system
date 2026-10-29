@@ -124,7 +124,7 @@ const DOM = {
   gotoRegisterLink:       document.getElementById("goto-register-link"),
   forgotPasswordLink:     document.getElementById("forgot-password-link"),
 
-  // Register Form (Create Account)
+  // Register Form
   registerForm:           document.getElementById("register-form"),
   regName:                document.getElementById("reg-name"),
   regEmail:               document.getElementById("reg-email"),
@@ -141,7 +141,7 @@ const DOM = {
   registerSubmitBtn:      document.getElementById("register-submit-btn"),
   gotoSigninLink:         document.getElementById("goto-signin-link"),
 
-  // OTP Verification Modal
+  // OTP Modal
   otpModal:               document.getElementById("otp-modal"),
   otpForm:                document.getElementById("otp-form"),
   otp1:                   document.getElementById("otp-1"),
@@ -221,7 +221,6 @@ const DOM = {
 // Notification Utility (Toasts)
 // ============================================================================
 function showToast(message, type = "success") {
-  if (!DOM.toastContainer) return;
   const toast = document.createElement("div");
   toast.className = `toast toast-${type}`;
   toast.innerHTML = `
@@ -266,13 +265,13 @@ function isValidCollegeEmail(email) {
 }
 
 function setFieldError(inputEl, errorEl, message = "") {
-  if (inputEl) inputEl.classList.add("is-invalid");
+  inputEl.classList.add("is-invalid");
   if (message && errorEl) errorEl.textContent = message;
   if (errorEl) errorEl.classList.add("show");
 }
 
 function clearFieldError(inputEl, errorEl) {
-  if (inputEl) inputEl.classList.remove("is-invalid");
+  inputEl.classList.remove("is-invalid");
   if (errorEl) errorEl.classList.remove("show");
 }
 
@@ -296,17 +295,18 @@ function updateNavAuthUI() {
   AppState.currentUser = user;
 
   if (user) {
-    if (DOM.navPrevBookingsBtn) DOM.navPrevBookingsBtn.style.display = "inline-block";
-    if (DOM.navUserBadge) DOM.navUserBadge.style.display = "inline-flex";
-    if (DOM.navUserName) DOM.navUserName.textContent = user.name;
-    if (DOM.userAvatarChar) DOM.userAvatarChar.textContent = user.name.charAt(0).toUpperCase();
-    if (DOM.navLogoutBtn) DOM.navLogoutBtn.style.display = "inline-block";
-    if (DOM.btnOpenAuth) DOM.btnOpenAuth.style.display = "none";
+    DOM.navPrevBookingsBtn.style.display = "inline-block";
+    DOM.navPrevBookingsBtn.textContent = user.role === "admin" ? "🏛️ Admin Portal" : "📋 My Bookings";
+    DOM.navUserBadge.style.display = "inline-flex";
+    DOM.navUserName.textContent = user.name;
+    DOM.userAvatarChar.textContent = user.name.charAt(0).toUpperCase();
+    DOM.navLogoutBtn.style.display = "inline-block";
+    DOM.btnOpenAuth.style.display = "none";
   } else {
-    if (DOM.navPrevBookingsBtn) DOM.navPrevBookingsBtn.style.display = "none";
-    if (DOM.navUserBadge) DOM.navUserBadge.style.display = "none";
-    if (DOM.navLogoutBtn) DOM.navLogoutBtn.style.display = "none";
-    if (DOM.btnOpenAuth) DOM.btnOpenAuth.style.display = "inline-block";
+    DOM.navPrevBookingsBtn.style.display = "none";
+    DOM.navUserBadge.style.display = "none";
+    DOM.navLogoutBtn.style.display = "none";
+    DOM.btnOpenAuth.style.display = "inline-block";
   }
 }
 
@@ -356,18 +356,15 @@ function switchAuthTab(tab) {
 }
 
 function openOtpModal() {
-   if (DOM.authModal) DOM.authModal.classList.remove("active");
-  if (DOM.otpModal) DOM.otpModal.classList.add("active");
+  DOM.authModal.classList.remove("active");
+  DOM.otpModal.classList.add("active");
   [DOM.otp1, DOM.otp2, DOM.otp3, DOM.otp4].forEach((inp) => {
-    if (inp) {
-      inp.value = "";
-      inp.classList.remove("is-invalid");
-    }
+    inp.value = "";
+    inp.classList.remove("is-invalid");
   });
-  if (DOM.otpBannerError) DOM.otpBannerError.classList.remove("show");
+  DOM.otpBannerError.classList.remove("show");
   startOtpCountdown(30);
-  setTimeout(() => { if (DOM.otp1) DOM.otp1.focus(); }, 80);
-}
+  setTimeout(() => DOM.otp1.focus(), 60);
 }
 
 function closeOtpModal() {
@@ -378,25 +375,19 @@ function startOtpCountdown(seconds = 30) {
   if (AppState.otpTimerInterval) clearInterval(AppState.otpTimerInterval);
   AppState.otpTimerSeconds = seconds;
 
-  if (DOM.btnResendOtp) {
-    DOM.btnResendOtp.disabled = true;
-    DOM.btnResendOtp.style.opacity = "0.45";
-  }
-  if (DOM.otpTimerText) {
-    DOM.otpTimerText.textContent = `(Resend in ${seconds}s)`;
-  }
+  DOM.btnResendOtp.disabled = true;
+  DOM.btnResendOtp.style.opacity = "0.45";
+  DOM.otpTimerText.textContent = `(Resend in ${seconds}s)`;
 
   AppState.otpTimerInterval = setInterval(() => {
     AppState.otpTimerSeconds--;
     if (AppState.otpTimerSeconds <= 0) {
       clearInterval(AppState.otpTimerInterval);
-      if (DOM.btnResendOtp) {
-        DOM.btnResendOtp.disabled = false;
-        DOM.btnResendOtp.style.opacity = "1";
-      }
-      if (DOM.otpTimerText) DOM.otpTimerText.textContent = "";
+      DOM.btnResendOtp.disabled = false;
+      DOM.btnResendOtp.style.opacity = "1";
+      DOM.otpTimerText.textContent = "";
     } else {
-      if (DOM.otpTimerText) DOM.otpTimerText.textContent = `(Resend in ${AppState.otpTimerSeconds}s)`;
+      DOM.otpTimerText.textContent = `(Resend in ${AppState.otpTimerSeconds}s)`;
     }
   }, 1000);
 }
@@ -574,7 +565,7 @@ function renderResults(venues, deptName) {
           <div class="timeline-divider">
             <span class="timeline-duration">Operating: 12 hrs</span>
             <div class="timeline-line"></div>
-            <span style="font-size:0.72rem; color:var(--text-sec); margin-top:2px;">Capacity: ${venue.capacity} Students</span>
+            <span style="font-size:0.72rem; color:var(--text-sec); margin-top:2px;">Capacity: total = (2 * ${venue.benches || Math.round((venue.capacity || 80)/2)}) = ${venue.capacity || ((venue.benches || 40)*2)} Students (${venue.benches || Math.round((venue.capacity || 80)/2)} benches)</span>
           </div>
 
           <div class="timeline-point" style="text-align:right;">
@@ -765,18 +756,24 @@ function renderDepartmentsDirectory(filterQuery = "") {
     if (!q) return true;
     return (
       dept.name.toLowerCase().includes(q) ||
+      (dept.shortCode && dept.shortCode.toLowerCase().includes(q)) ||
       dept.tagline.toLowerCase().includes(q) ||
       dept.description.toLowerCase().includes(q) ||
-      dept.roomsList.some((r) => r.toLowerCase().includes(q))
+      (dept.roomsList && dept.roomsList.some((r) => r.toLowerCase().includes(q)))
     );
   });
 
-  DOM.deptFilteredCount.textContent = `Showing ${filtered.length} of ${allDepts.length} Departments`;
+  if (DOM.deptFilteredCount) {
+    DOM.deptFilteredCount.textContent = `Showing ${filtered.length} of ${allDepts.length} Departments`;
+  }
 
   if (filtered.length === 0) {
     DOM.departmentsCardsGrid.innerHTML = `
-      <div style="grid-column:1/-1; text-align:center; padding:3rem; background:#fff; border-radius:12px;">
-        <p style="color:var(--text-muted); font-size:1rem;">No departments or classrooms match "${filterQuery}".</p>
+      <div style="grid-column:1/-1; text-align:center; padding:3rem; background:#fff; border-radius:12px; border:1px dashed var(--border);">
+        <p style="color:var(--text-muted); font-size:1rem; margin-bottom:0.75rem;">No departments or venues match "<strong>${filterQuery}</strong>".</p>
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('dept-search-input').value=''; renderDepartmentsDirectory('');">
+          Reset Filter
+        </button>
       </div>
     `;
     return;
@@ -785,53 +782,44 @@ function renderDepartmentsDirectory(filterQuery = "") {
   DOM.departmentsCardsGrid.innerHTML = filtered
     .map((dept) => {
       const deptVenues = ApiService.getVenuesByDepartment(dept.code);
+      const shortCode = dept.shortCode || dept.code.toUpperCase();
+      const roomsPreview = dept.roomsList && dept.roomsList.length > 0 
+        ? dept.roomsList.map(r => r.split(' ')[0]).slice(0, 3).join(', ')
+        : `${deptVenues.length} Rooms`;
 
       return `
-        <div class="dept-card" data-code="${dept.code}">
-          <div class="dept-card-visual" style="background:${dept.bgGradient};">
-            <div class="dept-visual-left">
-              <div class="dept-visual-icon">${dept.icon}</div>
-              <div class="dept-visual-info">
-                <h3>${dept.name}</h3>
-                <span>${dept.location}</span>
-              </div>
-            </div>
-            <span class="dept-year-badge">Est. ${dept.establishedYear}</span>
+        <div class="dept-box" data-code="${dept.code}" style="--dept-accent: ${dept.bgGradient || 'linear-gradient(90deg, #0c4340, #1a8c84)'};">
+          <div class="dept-box-header">
+            <div class="dept-box-icon">${dept.icon || "🏛️"}</div>
+            <span class="dept-box-badge">${shortCode}</span>
           </div>
 
-          <div class="dept-card-body">
-            <p class="dept-tagline-text">${dept.tagline}</p>
-            <p class="dept-desc-text">${dept.description}</p>
+          <h3 class="dept-box-title" title="${dept.name}">${dept.name}</h3>
 
-            <div class="dept-stats-row">
-              <span class="dept-stat-pill">🏛️ ${deptVenues.length} Venues / Rooms</span>
-              <span class="dept-stat-pill">👥 Capacity: ${dept.totalCapacity}</span>
-              <span class="dept-stat-pill">👤 Incharge: ${dept.incharge}</span>
-            </div>
-
-            <div class="dept-rooms-summary">
-              <div class="dept-rooms-summary-title">Classrooms &amp; Facilities Available:</div>
-              <div class="dept-rooms-tags-list">
-                ${dept.roomsList.map((r) => `<span class="dept-room-tag">${r}</span>`).join("")}
-              </div>
-            </div>
+          <div class="dept-box-stats">
+            <span class="dept-box-pill">🏛️ ${deptVenues.length} ${deptVenues.length === 1 ? 'Venue' : 'Venues'}</span>
+            <span class="dept-box-pill">👥 ${dept.totalCapacity} Seats</span>
           </div>
 
-          <div class="dept-card-footer">
-          <!-- 
-          <button class="btn-open-dept-modal" data-code="${dept.code}">
-              Explore Classrooms &rarr;
-            </button> -->
-            <a href="#hero-search-section" class="btn-quick-book-dept" data-code="${dept.code}">
-              Quick Search &rarr;
+          <div class="dept-box-rooms-preview" title="${dept.roomsList ? dept.roomsList.join(', ') : ''}">
+            <strong>Venues:</strong> ${roomsPreview}
+          </div>
+
+          <div class="dept-box-actions">
+            <a href="#hero-search-section" class="btn-dept-book btn-quick-book-dept" data-code="${dept.code}">
+              <span>Book Venue</span>
+              <span>&rarr;</span>
             </a>
+            <button class="btn-dept-info btn-open-dept-modal" data-code="${dept.code}" title="View Department Info & Facilities">
+              ℹ️ Info
+            </button>
           </div>
         </div>
       `;
     })
     .join("");
 
-  // Attach click handlers to "Explore Classrooms" buttons
+  // Attach click handlers to "Info" buttons
   document.querySelectorAll(".btn-open-dept-modal").forEach((btn) => {
     btn.addEventListener("click", () => {
       const code = btn.getAttribute("data-code");
@@ -844,9 +832,23 @@ function renderDepartmentsDirectory(filterQuery = "") {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       const code = btn.getAttribute("data-code");
-      DOM.filterDept.value = code;
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      showToast(`Selected ${code}. Choose date & click Search Venues.`);
+      if (DOM.filterDept) {
+        DOM.filterDept.value = code;
+        DOM.filterDept.classList.remove("is-invalid");
+      }
+      if (DOM.searchDeptError) {
+        DOM.searchDeptError.classList.remove("show");
+      }
+      const hero = document.getElementById("hero-search-section");
+      if (hero) {
+        hero.scrollIntoView({ behavior: "smooth" });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      setTimeout(() => {
+        if (DOM.filterDate) DOM.filterDate.focus();
+      }, 350);
+      showToast(`Selected department: ${code}. Pick a date to search!`);
     });
   });
 }
@@ -857,10 +859,12 @@ DOM.deptSearchInput.addEventListener("input", (e) => {
 });
 
 // Toggle button for Department Section
-DOM.btnToggleDepts.addEventListener("click", () => {
-  DOM.sectionDepartments.scrollIntoView({ behavior: "smooth" });
-  DOM.deptSearchInput.focus();
-});
+if (DOM.btnToggleDepts) {
+  DOM.btnToggleDepts.addEventListener("click", () => {
+    if (DOM.sectionDepartments) DOM.sectionDepartments.scrollIntoView({ behavior: "smooth" });
+    if (DOM.deptSearchInput) DOM.deptSearchInput.focus();
+  });
+}
 
 // Open Department Details Modal
 function openDepartmentDetailsModal(deptCode) {
@@ -877,7 +881,7 @@ function openDepartmentDetailsModal(deptCode) {
   DOM.deptModalLocation.textContent = dept.location;
   DOM.deptModalIncharge.textContent = dept.incharge;
   DOM.deptModalEmail.textContent = dept.inchargeEmail;
-  DOM.deptModalCapacity.textContent = `${dept.totalCapacity} Total Seats across ${venues.length} Facilities`;
+  DOM.deptModalCapacity.textContent = `total = (2 * ${Math.round(dept.totalCapacity / 2)} benches) = ${dept.totalCapacity} Total Seats across ${venues.length} Facilities`;
 
   DOM.deptModalRoomsTbody.innerHTML = venues
     .map((v) => {
@@ -885,7 +889,7 @@ function openDepartmentDetailsModal(deptCode) {
         <tr>
           <td><strong>${v.code}</strong><br><span style="font-size:0.75rem; color:var(--text-sec);">${v.name}</span></td>
           <td><span class="room-identity-type">${v.typeLabel}</span></td>
-          <td><strong>${v.capacity}</strong> Seats</td>
+          <td><strong>${v.capacity || ((v.benches || 40) * 2)}</strong> Seats <br><span style="font-size:0.75rem; color:var(--text-muted);">total = (2 * ${v.benches || Math.round((v.capacity || 80)/2)} benches)</span></td>
           <td>${v.amenities.map((a) => `<span class="tag-badge" style="margin:2px;">${a}</span>`).join("")}</td>
           <td>
             <button class="btn btn-sm btn-primary btn-modal-select-room" data-dept-code="${dept.code}" data-room-id="${v.id}">
@@ -951,7 +955,9 @@ function openVenueDetailModal(venueId) {
   DOM.modalVenueTitle.textContent = `${venue.name} (${venue.code})`;
   DOM.specLocation.textContent = venue.dept;
   DOM.specRoomCode.textContent = venue.code;
-  DOM.specCapacity.textContent = `${venue.capacity} Students`;
+  const specBenches = venue.benches || Math.round((venue.capacity || 80) / 2);
+  const specCap = venue.capacity || (specBenches * 2);
+  DOM.specCapacity.textContent = `total = (2 * ${specBenches}) = ${specCap} Students (${specBenches} Benches)`;
   DOM.specDate.textContent = AppState.currentFilters.date;
 
   DOM.specAmenitiesTags.innerHTML = venue.amenities
@@ -986,33 +992,29 @@ function openEmailComposerModal() {
   const venue = AppState.selectedVenue;
   const user = AppState.currentUser || { name: "Student Organizer", email: "student@college.ac.in", role: "student", dept: "College" };
   const targetDate = AppState.currentFilters.date;
-  const slotText = AppState.selectedSlot ? AppState.selectedSlot.slotLabel : "Full Day (08:00 AM - 08:00 PM)";
+  const slotText = AppState.selectedSlot ? AppState.selectedSlot.slotLabel : "Morning (08:00 AM - 11:00 AM)";
+  const benches = venue.benches || Math.round((venue.capacity || 80) / 2);
+  const totalCap = venue.capacity || (benches * 2);
 
-  DOM.mailTo.value = venue.inchargeEmail;
-  DOM.mailSubject.value = `Facility Requisition: Permission for ${venue.code} on ${targetDate} (${slotText})`;
+  const reqVenueName = document.getElementById("req-venue-name");
+  const reqDeptName = document.getElementById("req-dept-name");
+  const reqDateVal = document.getElementById("req-date-val");
+  const reqSlotVal = document.getElementById("req-slot-val");
+  const reqCapacityVal = document.getElementById("req-capacity-val");
+  const reqPurpose = document.getElementById("booking-purpose-input");
+  const reqAttendees = document.getElementById("booking-attendees-input");
 
-  DOM.mailBody.value = `Respected Sir/Madam,
+  if (reqVenueName) reqVenueName.textContent = `${venue.name} (${venue.code})`;
+  if (reqDeptName) reqDeptName.textContent = venue.dept;
+  if (reqDateVal) reqDateVal.textContent = targetDate;
+  if (reqSlotVal) reqSlotVal.textContent = slotText;
+  if (reqCapacityVal) reqCapacityVal.textContent = `total = (2 * ${benches} benches) = ${totalCap} Seats`;
+  if (reqAttendees) reqAttendees.value = Math.min(40, totalCap);
+  if (reqPurpose) reqPurpose.value = "Classroom / Academic Activity";
 
-I am writing to formally request permission to reserve facility ${venue.code} (${venue.dept}) for college academic and club activities.
-
-Reservation Summary:
-- Facility: ${venue.name} (${venue.code})
-- Location: ${venue.floor}
-- Required Capacity: ${venue.capacity} students
-- Date: ${targetDate}
-- Time Slot: ${slotText}
-
-Applicant Information:
-- Full Name: ${user.name}
-- Role: ${user.role.toUpperCase()}
-- Department: ${user.dept}
-- Email: ${user.email}
-
-Kindly grant your kind approval for the venue reservation.
-
-Yours sincerely,
-${user.name}
-${user.dept}`;
+  // Pre-fill fallback fields if present
+  if (DOM.mailTo) DOM.mailTo.value = venue.inchargeEmail || "admin@college.ac.in";
+  if (DOM.mailSubject) DOM.mailSubject.value = `Facility Requisition: ${venue.code} on ${targetDate} (${slotText})`;
 
   DOM.emailComposerModal.classList.add("active");
 }
@@ -1021,15 +1023,17 @@ function closeEmailComposerModal() {
   DOM.emailComposerModal.classList.remove("active");
 }
 
-// Open real mailto
-DOM.btnOpenRealMailto.addEventListener("click", () => {
-  const to = encodeURIComponent(DOM.mailTo.value);
-  const subject = encodeURIComponent(DOM.mailSubject.value);
-  const body = encodeURIComponent(DOM.mailBody.value);
-  window.open(`mailto:${to}?subject=${subject}&body=${body}`, "_blank");
-});
+// Open real mailto fallback if element exists
+if (DOM.btnOpenRealMailto) {
+  DOM.btnOpenRealMailto.addEventListener("click", () => {
+    const to = encodeURIComponent(DOM.mailTo ? DOM.mailTo.value : "admin@college.ac.in");
+    const subject = encodeURIComponent(DOM.mailSubject ? DOM.mailSubject.value : "Venue Booking Request");
+    const body = encodeURIComponent(DOM.mailBody ? DOM.mailBody.value : "Please approve venue booking.");
+    window.open(`mailto:${to}?subject=${subject}&body=${body}`, "_blank");
+  });
+}
 
-// Send Email & Confirm Booking
+// Submit Request to Admin & Confirm Booking
 DOM.btnSendEmailConfirm.addEventListener("click", async () => {
   const venue = AppState.selectedVenue;
   const user = AppState.currentUser;
@@ -1037,8 +1041,14 @@ DOM.btnSendEmailConfirm.addEventListener("click", async () => {
   const slotTime = AppState.selectedSlot ? AppState.selectedSlot.slotTime : "08:00 AM - 11:00 AM";
   const slotLabel = AppState.selectedSlot ? AppState.selectedSlot.slotLabel : "Selected Slot";
 
+  const purposeInput = document.getElementById("booking-purpose-input");
+  const attendeesInput = document.getElementById("booking-attendees-input");
+
+  const purpose = (purposeInput && purposeInput.value.trim()) ? purposeInput.value.trim() : "Classroom / Academic Activity";
+  const attendees = (attendeesInput && attendeesInput.value) ? Number(attendeesInput.value) : 40;
+
   DOM.btnSendEmailConfirm.disabled = true;
-  DOM.btnSendEmailConfirm.innerHTML = `<span class="spinner"></span> Dispatching Requisition...`;
+  DOM.btnSendEmailConfirm.innerHTML = `<span class="spinner"></span> Sending Request to Admin...`;
 
   try {
     const bookingResult = await ApiService.createBooking({
@@ -1052,27 +1062,28 @@ DOM.btnSendEmailConfirm.addEventListener("click", async () => {
       bookedBy: user.name,
       applicantEmail: user.email,
       applicantRole: user.role || "student",
-      inchargeEmail: venue.inchargeEmail,
-      purpose: "Classroom / Seminar Activity"
+      inchargeEmail: venue.inchargeEmail || "admin@college.ac.in",
+      purpose: purpose,
+      attendees_count: attendees
     });
 
     closeEmailComposerModal();
 
     DOM.ticketId.textContent = `#${bookingResult.id}`;
-    DOM.ticketVenue.textContent = `${bookingResult.venueCode} (${bookingResult.venueName})`;
-    DOM.ticketDept.textContent = bookingResult.dept;
-    DOM.ticketDate.textContent = bookingResult.date;
-    DOM.ticketSlot.textContent = `${bookingResult.timeSlot} (Pending Approval)`;
+    DOM.ticketVenue.textContent = `${bookingResult.venueCode || venue.code} (${bookingResult.venueName || venue.name})`;
+    DOM.ticketDept.textContent = bookingResult.dept || venue.dept;
+    DOM.ticketDate.textContent = bookingResult.date || targetDate;
+    DOM.ticketSlot.textContent = `${bookingResult.timeSlot || slotTime} (Pending Admin Approval)`;
 
     DOM.bookingSuccessModal.classList.add("active");
-    showToast(`Requisition Submitted! Sent for Department Admin approval.`);
+    showToast(`Booking request sent to Admin account successfully!`, "success");
 
     executeSearch(); // Refresh results to reflect newly booked slot
   } catch (err) {
     showToast(err.message, "error");
   } finally {
     DOM.btnSendEmailConfirm.disabled = false;
-    DOM.btnSendEmailConfirm.innerHTML = `<span>Send Email &bull; Confirm Booking</span>`;
+    DOM.btnSendEmailConfirm.innerHTML = `<span>📨 Submit Request to Admin</span>`;
   }
 });
 
@@ -1111,20 +1122,20 @@ async function openPreviousBookingsModal() {
       // -------------------------------------------------------------
       if (modalTitle) modalTitle.innerHTML = `🏛️ Department Requisition &amp; Approval Portal`;
 
-      // Filter pending requests for this department (or all if Central/none)
+      // Admin requisition filter
       const pendingList = allBookings.filter((b) => {
         const isPending = b.status === "Pending Approval" || b.status === "Pending";
         if (!isPending) return false;
         if (!user.dept || user.dept === "all" || user.dept === "Academic Complex") return true;
-        return b.dept && (b.dept.toLowerCase().includes(user.dept.toLowerCase()) || user.dept.toLowerCase().includes(b.dept.toLowerCase()));
+        return true;
       });
 
-      // Filter processed bookings for this department
+      // Filter processed bookings for this campus admin
       const historyList = allBookings.filter((b) => {
         const isPending = b.status === "Pending Approval" || b.status === "Pending";
         if (isPending) return false;
         if (!user.dept || user.dept === "all" || user.dept === "Academic Complex") return true;
-        return b.dept && (b.dept.toLowerCase().includes(user.dept.toLowerCase()) || user.dept.toLowerCase().includes(b.dept.toLowerCase()));
+        return true;
       });
 
       contentContainer.innerHTML = `
@@ -1697,7 +1708,12 @@ DOM.otpForm.addEventListener("submit", async (e) => {
 
   try {
     const result = await ApiService.verifyRegistrationOtp(AppState.pendingOtpEmail, enteredCode);
-    showToast(`Welcome to BookIt, ${result.user.name}! Your account is verified.`);
+    if (result.requiresApproval) {
+      showToast(result.message, "success");
+      alert("Admin Account Registration Submitted!\n\nAn authorization email has been sent to the designated administrators:\n- vinaynm25.aiml@coeptech.ac.in\n- vazeba25.comp@coeptech.ac.in\n- vhankalasph25.comp@coeptech.ac.in\n\nYour account will be activated once verified by either of them.");
+    } else {
+      showToast(`Welcome to BookIt, ${result.user.name}! Your account is verified.`);
+    }
     DOM.registerForm.reset();
     DOM.otpForm.reset();
     closeOtpModal();
@@ -1765,23 +1781,29 @@ DOM.otpBackBtn.addEventListener("click", () => {
 // ============================================================================
 function setupEventListeners() {
   // Brand logo
-  if (DOM.brandHomeBtn) {
-    DOM.brandHomeBtn.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-  }
+  DOM.brandHomeBtn.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
 
   // Mobile menu
-  if (DOM.mobileToggleBtn) {
-    DOM.mobileToggleBtn.addEventListener("click", () => {
-      DOM.navMenu.classList.toggle("show-mobile");
-    });
-  }
+  DOM.mobileToggleBtn.addEventListener("click", () => {
+    DOM.navMenu.classList.toggle("show-mobile");
+  });
 
   // Header Nav links
-  if (DOM.navContactBtn) DOM.navContactBtn.addEventListener("click", () => DOM.navMenu.classList.remove("show-mobile"));
-
-  // Single Header Auth Button: "Sign In / Create Account"
+  // DOM.navSearchBtn.addEventListener("click", () => {
+  //   DOM.navMenu.classList.remove("show-mobile");
+  // });
+  // DOM.navDeptBtn.addEventListener("click", () => {
+  //   DOM.navMenu.classList.remove("show-mobile");
+  // });
+  DOM.navAboutBtn.addEventListener("click", () => {
+    DOM.navMenu.classList.remove("show-mobile");
+  });
+  DOM.navContactBtn.addEventListener("click", () => {
+    DOM.navMenu.classList.remove("show-mobile");
+  });
+  // Login / Register button
   if (DOM.btnOpenAuth) {
     DOM.btnOpenAuth.addEventListener("click", (e) => {
       e.preventDefault();
@@ -1834,6 +1856,15 @@ function setupEventListeners() {
     DOM.forgotPasswordLink.addEventListener("click", (e) => {
       e.preventDefault();
       showToast("Please contact the Central Administration at venues.admin@college.ac.in to reset password.", "success");
+    });
+  }
+
+  if (DOM.regRole) {
+    DOM.regRole.addEventListener("change", () => {
+      const hint = document.getElementById("admin-role-hint");
+      if (hint) {
+        hint.style.display = DOM.regRole.value === "admin" ? "block" : "none";
+      }
     });
   }
 
