@@ -16,13 +16,13 @@ const ApiConfig = {
   BASE_URL: window.location.origin + "/api",
   MOCK_DELAY_MS: 200,
   STORAGE_KEYS: {
-    USERS: "bookit_users_db_v3",
-    CURRENT_USER: "bookit_current_user_v3",
-    AUTH_TOKEN: "bookit_auth_token_v3",
-    VENUES: "bookit_venues_db_v3",
-    BOOKINGS: "bookit_bookings_db_v3",
-    PENDING_USER: "bookit_pending_user_v3",
-    OTP_STORE: "bookit_otp_store_v3"
+    USERS: "bookit_users_db_v5",
+    CURRENT_USER: "bookit_current_user_v5",
+    AUTH_TOKEN: "bookit_auth_token_v5",
+    VENUES: "bookit_venues_db_v5",
+    BOOKINGS: "bookit_bookings_db_v5",
+    PENDING_USER: "bookit_pending_user_v5",
+    OTP_STORE: "bookit_otp_store_v5"
   }
 };
 
@@ -47,7 +47,6 @@ function initializeDatabase() {
   if (!storedBookings || storedBookings.length === 0) {
     localStorage.setItem(ApiConfig.STORAGE_KEYS.BOOKINGS, JSON.stringify(INITIAL_BOOKINGS));
   } else {
-    // Ensure all demo bookings from INITIAL_BOOKINGS exist for testing approval workflows
     let updated = false;
     INITIAL_BOOKINGS.forEach((ib) => {
       if (!storedBookings.some((sb) => sb.id === ib.id)) {
@@ -60,83 +59,46 @@ function initializeDatabase() {
     }
   }
 
-  // Default demo users with official .ac.in college emails
-  const defaultDemoUsers = [
+  // Sole designated Super Administrators who can approve requisitions and authorize new admin accounts
+  const defaultAuthorizedAdmins = [
     {
-      id: "usr-1",
-      name: "Aman Sharma",
-      email: "aman.student@college.ac.in",
-      role: "student",
-      dept: "Department of Computer Science and Engineering (new)",
-      password: "password123",
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: "usr-2",
-      name: "Dr. Sunita Sen",
-      email: "sunita.faculty@college.ac.in",
-      role: "faculty",
-      dept: "Department of Electrical Engineering",
-      password: "password123",
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: "usr-3",
-      name: "Purva Patel",
-      email: "purva.patel@college.ac.in",
-      role: "student",
-      dept: "Department of Computer Science and Engineering (new)",
-      password: "password123",
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: "usr-4",
-      name: "Prof. Rajesh Verma",
-      email: "admin.cse@college.ac.in",
+      id: "usr-admin-1",
+      name: "Purva V",
+      email: "PurvaV@college.ac.in",
       role: "admin",
       status: "approved",
       dept: "Department of Computer Science and Engineering (new)",
-      password: "password123",
+      password: "Purva@123",
       createdAt: new Date().toISOString()
     },
     {
-      id: "usr-5",
-      name: "Vinay N M (Super Admin)",
-      email: "vinaynm25.aiml@coeptech.ac.in",
+      id: "usr-admin-2",
+      name: "Mrudula N",
+      email: "MrudulaN@college.ac.in",
       role: "admin",
       status: "approved",
-      dept: "Artificial Intelligence & Machine Learning",
-      password: "password123",
+      dept: "Department of Information Technology",
+      password: "Mrudula@123",
       createdAt: new Date().toISOString()
     },
     {
-      id: "usr-6",
-      name: "Vazeba (Super Admin)",
-      email: "vazeba25.comp@coeptech.ac.in",
+      id: "usr-admin-3",
+      name: "Bhargav V",
+      email: "BhargavV@college.ac.in",
       role: "admin",
       status: "approved",
-      dept: "Computer Engineering",
-      password: "password123",
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: "usr-7",
-      name: "Vhankalas P H (Super Admin)",
-      email: "vhankalasph25.comp@coeptech.ac.in",
-      role: "admin",
-      status: "approved",
-      dept: "Computer Engineering",
-      password: "password123",
+      dept: "Department of Electronics and Telecommunication Engineering",
+      password: "Bhargav@123",
       createdAt: new Date().toISOString()
     }
   ];
 
   const storedUsers = JSON.parse(localStorage.getItem(ApiConfig.STORAGE_KEYS.USERS) || "[]");
   if (!storedUsers || storedUsers.length === 0) {
-    localStorage.setItem(ApiConfig.STORAGE_KEYS.USERS, JSON.stringify(defaultDemoUsers));
+    localStorage.setItem(ApiConfig.STORAGE_KEYS.USERS, JSON.stringify(defaultAuthorizedAdmins));
   } else {
     let usersUpdated = false;
-    defaultDemoUsers.forEach((du) => {
+    defaultAuthorizedAdmins.forEach((du) => {
       if (!storedUsers.some((su) => su.email.toLowerCase() === du.email.toLowerCase())) {
         storedUsers.push(du);
         usersUpdated = true;
@@ -268,7 +230,7 @@ const ApiService = {
         success: true,
         requiresApproval: true,
         user: pendingUser,
-        message: "Admin account submitted! An authorization request has been dispatched to vinaynm25.aiml@coeptech.ac.in, vazeba25.comp@coeptech.ac.in, and vhankalasph25.comp@coeptech.ac.in. Your account will activate as soon as one approves."
+        message: "Admin registration request sent! An authorization request has been dispatched to Purva (PurvaV@college.ac.in), Mrudula (MrudulaN@college.ac.in), and Bhargav (BhargavV@college.ac.in). Your account will be activated once approved by any of them."
       };
     }
 
@@ -321,7 +283,7 @@ const ApiService = {
     }
 
     if (user.role === "admin" && user.status === "pending_approval") {
-      throw new Error("Your Admin account is pending authorization from the designated administrators (vinaynm25.aiml@coeptech.ac.in, vazeba25.comp@coeptech.ac.in, vhankalasph25.comp@coeptech.ac.in).");
+      throw new Error("Your Admin account is pending approval from the designated administrators: Purva (PurvaV@college.ac.in), Mrudula (MrudulaN@college.ac.in), or Bhargav (BhargavV@college.ac.in). Please wait for approval before logging in.");
     }
 
     const token = "mock_jwt_token_" + Date.now();
@@ -617,5 +579,88 @@ const ApiService = {
     bookings[index].status = "Cancelled";
     localStorage.setItem(ApiConfig.STORAGE_KEYS.BOOKINGS, JSON.stringify(bookings));
     return bookings[index];
+  },
+
+  // ========================================================================
+  // Administrator Access Approval Management
+  // ========================================================================
+
+  async getPendingAdminRequests() {
+    await delay(60);
+    // Attempt backend query if live
+    try {
+      const authToken = localStorage.getItem(ApiConfig.STORAGE_KEYS.AUTH_TOKEN);
+      const res = await fetch(`${ApiConfig.BASE_URL}/admin/pending-admins`, {
+        headers: authToken ? { Authorization: `Bearer ${authToken}` } : {}
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.pending_admins && data.pending_admins.length > 0) {
+          return data.pending_admins;
+        }
+      }
+    } catch (e) {}
+
+    // Fallback to localStorage
+    const users = JSON.parse(localStorage.getItem(ApiConfig.STORAGE_KEYS.USERS) || "[]");
+    return users.filter((u) => u.role === "admin" && u.status === "pending_approval");
+  },
+
+  async approveAdminRequest(userId, approverEmail = "") {
+    await delay(120);
+    // Forward to backend API if live
+    try {
+      const authToken = localStorage.getItem(ApiConfig.STORAGE_KEYS.AUTH_TOKEN);
+      await fetch(`${ApiConfig.BASE_URL}/admin/approve-admin/${userId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(authToken ? { Authorization: `Bearer ${authToken}` } : {})
+        }
+      });
+    } catch (e) {}
+
+    const users = JSON.parse(localStorage.getItem(ApiConfig.STORAGE_KEYS.USERS) || "[]");
+    const idx = users.findIndex(
+      (u) => String(u.id) === String(userId) || u.email.toLowerCase() === String(userId).toLowerCase()
+    );
+
+    if (idx !== -1) {
+      users[idx].status = "approved";
+      users[idx].approvedBy = approverEmail;
+      users[idx].approvedAt = new Date().toISOString();
+      localStorage.setItem(ApiConfig.STORAGE_KEYS.USERS, JSON.stringify(users));
+      return users[idx];
+    }
+    return { success: true };
+  },
+
+  async rejectAdminRequest(userId, approverEmail = "") {
+    await delay(120);
+    // Forward to backend API if live
+    try {
+      const authToken = localStorage.getItem(ApiConfig.STORAGE_KEYS.AUTH_TOKEN);
+      await fetch(`${ApiConfig.BASE_URL}/admin/reject-admin/${userId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(authToken ? { Authorization: `Bearer ${authToken}` } : {})
+        }
+      });
+    } catch (e) {}
+
+    const users = JSON.parse(localStorage.getItem(ApiConfig.STORAGE_KEYS.USERS) || "[]");
+    const idx = users.findIndex(
+      (u) => String(u.id) === String(userId) || u.email.toLowerCase() === String(userId).toLowerCase()
+    );
+
+    if (idx !== -1) {
+      users[idx].status = "rejected";
+      users[idx].rejectedBy = approverEmail;
+      users[idx].rejectedAt = new Date().toISOString();
+      localStorage.setItem(ApiConfig.STORAGE_KEYS.USERS, JSON.stringify(users));
+      return users[idx];
+    }
+    return { success: true };
   }
 };
