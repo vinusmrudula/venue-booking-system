@@ -97,12 +97,6 @@ const DOM = {
   deptModalCapacity:      document.getElementById("dept-modal-capacity"),
   deptModalRoomsTbody:    document.getElementById("dept-modal-rooms-tbody"),
 
-  // Contact Form
-  contactInquiryForm:     document.getElementById("contact-inquiry-form"),
-  contactName:            document.getElementById("contact-name"),
-  contactEmail:           document.getElementById("contact-email"),
-  contactDept:            document.getElementById("contact-dept"),
-  contactMsg:             document.getElementById("contact-msg"),
 
   // Auth Modal
   authModal:              document.getElementById("auth-modal"),
@@ -758,7 +752,7 @@ function renderDepartmentsDirectory(filterQuery = "") {
       dept.name.toLowerCase().includes(q) ||
       (dept.shortCode && dept.shortCode.toLowerCase().includes(q)) ||
       dept.tagline.toLowerCase().includes(q) ||
-      dept.description.toLowerCase().includes(q) ||
+      //dept.description.toLowerCase().includes(q) ||
       (dept.roomsList && dept.roomsList.some((r) => r.toLowerCase().includes(q)))
     );
   });
@@ -873,7 +867,7 @@ function openDepartmentDetailsModal(deptCode) {
 
   const venues = ApiService.getVenuesByDepartment(deptCode);
 
-  DOM.deptModalBanner.style.background = dept.bgGradient;
+  //DOM.deptModalBanner.style.background = dept.bgGradient;
   DOM.deptModalIcon.textContent = dept.icon;
   DOM.deptModalTitle.textContent = dept.name;
   DOM.deptModalTagline.textContent = dept.tagline;
@@ -919,30 +913,7 @@ function closeDepartmentDetailsModal() {
   DOM.deptDetailsModal.classList.remove("active");
 }
 
-// ============================================================================
-// CONTACT US FORM HANDLER
-// ============================================================================
-DOM.contactInquiryForm.addEventListener("submit", (e) => {
-  e.preventDefault();
 
-  const name = DOM.contactName.value.trim();
-  const email = DOM.contactEmail.value.trim();
-  const dept = DOM.contactDept.value;
-  const msg = DOM.contactMsg.value.trim();
-
-  if (!name || !email || !msg) {
-    showToast("Please fill out all required fields.", "error");
-    return;
-  }
-
-  if (!isValidCollegeEmail(email)) {
-    showToast("Please use an official college email ending with .ac.in", "error");
-    return;
-  }
-
-  showToast(`Thank you, ${name}! Your inquiry has been dispatched to the Venue Administration.`, "success");
-  DOM.contactInquiryForm.reset();
-});
 
 // ============================================================================
 // VENUE DETAILS & REQUISITION MODALS
