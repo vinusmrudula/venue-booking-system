@@ -1,0 +1,50 @@
+Department,New Hall Name,Benches,Email
+Civil Engineering,SC06,30,hod.civil@coeptech.ac.in
+Civil Engineering,SC07,27,hod.civil@coeptech.ac.in
+Civil Engineering,NC16,55,hod.civil@coeptech.ac.in
+Civil Engineering,SC20,25,hod.civil@coeptech.ac.in
+Civil Engineering,SC21,47,hod.civil@coeptech.ac.in
+Academics Complex,NC01,36,hod.appsci@coeptech.ac.in
+Academics Complex,NC02,36,hod.appsci@coeptech.ac.in
+Academics Complex,NC03,36,hod.appsci@coeptech.ac.in
+Academics Complex,NC04,36,hod.appsci@coeptech.ac.in
+Academics Complex,NC05,36,hod.appsci@coeptech.ac.in
+Academics Complex,NC06,36,hod.appsci@coeptech.ac.in
+Academics Complex,NC07,36,hod.appsci@coeptech.ac.in
+Academics Complex,NC08,36,hod.appsci@coeptech.ac.in
+Academics Complex,NC09,75,hod.appsci@coeptech.ac.in
+Academics Complex,NC10,85,hod.appsci@coeptech.ac.in
+Academics Complex,NC11,34,hod.appsci@coeptech.ac.in
+Academics Complex,NC12,34,hod.appsci@coeptech.ac.in
+Academics Complex,NC13,34,hod.appsci@coeptech.ac.in
+Academics Complex,NC14,40,hod.appsci@coeptech.ac.in
+Electrical Engineering,SC01,44,hod.elec@coeptech.ac.in
+Electrical Engineering,SC02,27,hod.elec@coeptech.ac.in
+Electrical Engineering,SC03,34,hod.elec@coeptech.ac.in
+Electrical Engineering,ST06,21,hod.elec@coeptech.ac.in
+Electronics and Telecommunication Engineering,NC22,40,hod.extc@coeptech.ac.in
+Electronics and Telecommunication Engineering,NT10,30,hod.extc@coeptech.ac.in
+Electronics and Telecommunication Engineering,NC23,40,hod.extc@coeptech.ac.in
+Electronics and Telecommunication Engineering,NC24,35,hod.extc@coeptech.ac.in
+Electronics and Telecommunication Engineering,NT11,35,hod.extc@coeptech.ac.in
+Mechanical Engineering,NC18,40,hod.mech@coeptech.ac.in
+Mechanical Engineering,NC19,45,hod.mech@coeptech.ac.in
+Mechanical Engineering,NC20,35,hod.mech@coeptech.ac.in
+Mechanical Engineering,NC21,35,hod.mech@coeptech.ac.in
+Mechanical Engineering,NT06,25,hod.mech@coeptech.ac.in
+Mechanical Engineering,ND01,180,hod.mech@coeptech.ac.in
+Metallurgy and Materials Science,SC14,34,hod.mfg@coeptech.ac.in
+Metallurgy and Materials Science,SC15,24,hod.mfg@coeptech.ac.in
+Metallurgy and Materials Science,SC16,48,hod.mfg@coeptech.ac.in
+Management,SC17,40,hod.appsci@coeptech.ac.in
+Management,SC18,40,hod.appsci@coeptech.ac.in
+Management,SC19,40,hod.appsci@coeptech.ac.in
+Manufacturing Engineering and Industrial Management,SC10,45,hod.mfg@coeptech.ac.in
+Manufacturing Engineering and Industrial Management,SC11,27,hod.mfg@coeptech.ac.in
+Manufacturing Engineering and Industrial Management,SC12,27,hod.mfg@coeptech.ac.in
+Manufacturing Engineering and Industrial Management,SC13,25,hod.mfg@coeptech.ac.in
+Computer New Building,NC-27,40,hod.comp@coeptech.ac.in
+Computer New Building,NC-28,40,hod.comp@coeptech.ac.in
+Computer New Building,Near NC-27 Passage -1,25,hod.comp@coeptech.ac.in
+Computer New Building,Near NC-27 Passage -2,25,hod.comp@coeptech.ac.in
+
